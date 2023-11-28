@@ -10,10 +10,12 @@ import {
 } from "@mui/material";
 import { Mail, Pets, Notifications } from "@mui/icons-material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-
+import BasicModal from "./Modal";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import UserMenu from "./UserMenu";
-import { useChattyContext } from "../App";
-
+import { useChattyContext } from "../pages/Home";
+import { useAppContext } from "../App";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 const StyledToolBar = styled(Toolbar)({
   display: "flex",
   justifyContent: "space-between",
@@ -37,14 +39,16 @@ const UserIcons = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: "20px",
+  gap: "10px",
   [theme.breakpoints.up("sm")]: {
     display: "none",
   },
 }));
 
 const NavBar = () => {
-  const { sideBarHandlerOpen, sideBarOpen } = useChattyContext();
+  const { sideBarHandlerOpen, sideBarOpen, OpenModalHandler, ModalState } =
+    useChattyContext();
+  const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
 
   return (
     <AppBar position="sticky">
@@ -61,12 +65,18 @@ const NavBar = () => {
           {!sideBarOpen && (
             <IconButton sx={{ color: "inherit" }} onClick={sideBarHandlerOpen}>
               {" "}
-              <MenuRoundedIcon />
+              <MenuRoundedIcon sx={{ display: { xs: "none", md: "block" } }} />
             </IconButton>
           )}
         </Typography>
-
         <Pets sx={{ display: { xs: "block", sm: "none" } }} />
+        {!ModalState && (
+          <IconButton sx={{ color: "inherit" }} onClick={OpenModalHandler}>
+            {" "}
+            <MenuRoundedIcon sx={{ display: { xs: "block", md: "none" } }} />
+          </IconButton>
+        )}
+        {ModalState && <BasicModal />}
         <Search placeholder="Search...">
           <InputBase placeholder="Search..."></InputBase>
         </Search>
@@ -91,6 +101,17 @@ const NavBar = () => {
           >
             <Notifications />
           </Badge>
+          {mode === "dark" && (
+            <IconButton onClick={lightThemeHandler}>
+              <LightModeIcon />
+            </IconButton>
+          )}
+          {mode === "light" && (
+            <IconButton onClick={darkThemeHandler}>
+              <DarkModeIcon />
+            </IconButton>
+          )}
+
           <UserMenu />
         </Icons>
         <UserIcons>
