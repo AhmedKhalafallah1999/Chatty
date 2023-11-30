@@ -2,7 +2,7 @@ import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { purple } from "@mui/material/colors";
-import { Form, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 const BootstrapButton = styled(Button)({
   boxShadow: "none",
   textTransform: "none",
@@ -40,8 +40,17 @@ const BootstrapButton = styled(Button)({
 });
 
 const ColorButton = styled(Button)(({ theme }) => ({
+  textTransform: "capitalize",
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: purple[500],
+  "&:hover": {
+    backgroundColor: purple[700],
+  },
+}));
+const CustomButton = styled(Button)(({ theme }) => ({
+  textTransform: "capitalize",
+  color: theme.palette.getContrastText(purple[500]),
+  backgroundColor: "#382153",
   "&:hover": {
     backgroundColor: purple[700],
   },
@@ -57,6 +66,9 @@ export default function CustomizedButtons() {
       <BootstrapButton component={Link} to="/login" variant="contained">
         Login
       </BootstrapButton>
+      <CustomButton component={Link} to="/home" variant="contained">
+        Explore the App
+      </CustomButton>
     </Stack>
   );
 }

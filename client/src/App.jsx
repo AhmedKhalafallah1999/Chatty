@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createContext, useContext, useState } from "react";
 import Home from "./pages/Home";
 import LandingPage from "./pages/LandingPage";
+import { action as RegisteredAction } from "./pages/Register";
+import { action as LoggedInAction } from "./pages/Login";
 const AppContext = createContext();
 const router = createBrowserRouter([
   {
@@ -16,10 +18,12 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <LandingPage isRegister />,
+    action: RegisteredAction,
   },
   {
     path: "/login",
     element: <LandingPage isLogin />,
+    action: LoggedInAction,
   },
 ]);
 function App() {

@@ -51,7 +51,6 @@ body::after {
   border-radius: 2rem;
   box-shadow: 10px 15px 40px #00000030;
   background: white;
-  
 }
 .head {
   background: linear-gradient(270deg, hsl(293, 100%, 63%), hsl(264, 100%, 61%));
@@ -274,5 +273,8 @@ input::placeholder {
   .text {
     margin: 0 2rem;
     text-align: center;
+  }
+  .mobile {
+    display: none;
   }
 }
