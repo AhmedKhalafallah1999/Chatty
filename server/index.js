@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { StatusCodes } from "http-status-codes";
+import "express-async-errors";
 // import cors from "cors";
 import test from "./routes/test.js";
 import auth from "./routes/auth.js";
@@ -11,10 +11,11 @@ dotenv.config();
 // app.use(cors());
 
 app.use(express.json());
-// test Router
-app.use("/api/v1", test);
 // auth middleware
 app.use("/api/v1/auth", auth);
+// test Router
+app.use("/api/v1", test);
+
 // Not found middleware
 app.use("*", (req, res) => {
   // res.status(StatusCodes.NOT_FOUND).json({ msg: "Not found middleware" });
@@ -26,15 +27,12 @@ app.use("*", (err, req, res, next) => {
   // console.log(err);
 });
 
-// mongoose
-//   .connect(process.env.MONGO_URL, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => {
-//     console.log("DB Connection successful");
-//   })
-//   .catch((err) => console.log(err.messag));
-app.listen(process.env.PORT, () => {
-  console.log(`app is connected on port ${process.env.PORT}`);
-});
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    console.log("DB Connection successful");
+    app.listen(process.env.PORT, () => {
+      console.log(`app is connected on port ${process.env.PORT}`);
+    });
+  })
+  .catch((err) => console.log(err.messag));

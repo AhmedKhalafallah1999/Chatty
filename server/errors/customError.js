@@ -20,7 +20,7 @@ export class NotAuthinticationError extends Error {
     super(msg);
     this.name = "NotAuthinticationError";
     this.message = msg;
-    this.StatusCodes = StatusCodes.UNAUTHINTICATED;
+    this.StatusCodes = StatusCodes.UNAUTHORIZED;
   }
 }
 export class UnAuthorizedError extends Error {
@@ -28,6 +28,6 @@ export class UnAuthorizedError extends Error {
     super(msg);
     this.name = "UnAuthorizedError";
     this.message = msg;
-    this.StatusCodes = StatusCodes.UNAUTHORIZED;
+    this.StatusCodes = StatusCodes.FORBIDDEN;
   }
 }

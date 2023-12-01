@@ -78,7 +78,7 @@ export default function Registration() {
               id="confirm-password"
               type="password"
               label="Confirm Password"
-              name="confirm-password"
+              name="confirmPassword"
               autoComplete="false"
               InputProps={{
                 startAdornment: (
