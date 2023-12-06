@@ -19,8 +19,7 @@ export const validationHandler = (inputs) => {
         if (!isEqual && confirmPassword) {
           errMessages.push("sorry, not identical passwords");
         }
-        console.log(errMessages);
-        throw new BadRequestError(errMessages);
+        throw new BadRequestError(errMessages.join(""));
       } else {
         next();
       }
@@ -65,4 +64,22 @@ export const ValidateLoginInputs = validationHandler([
       }
     }),
   body("password").notEmpty().withMessage("Please, enter a password"),
+]);
+export const ValidateResetInputs = validationHandler([
+  body("email")
+    .notEmpty()
+    .withMessage("Plaese, enter an email...")
+    .isEmail()
+    .withMessage("Please, provide a valid email ")
+    .custom(async (value) => {
+      const User = await user.findOne({ email: value });
+      if (!User) {
+        throw new NotAuthinticationError(
+          "Sorry, create an account first or enter a valid inputs"
+        );
+      }
+    }),
+]);
+export const ValidateNewPasswordInputs = validationHandler([
+  body("password").notEmpty().withMessage("Please, enter a new password"),
 ]);

@@ -5,8 +5,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-
-import axios from "axios";
+import { redirect } from "react-router-dom";
 import {
   Button,
   Card,
@@ -16,6 +15,7 @@ import {
 } from "@mui/material";
 import { Form, Link } from "react-router-dom";
 import styled from "@emotion/styled";
+import { toast } from "react-toastify";
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -29,11 +29,11 @@ export const action = async ({ request }) => {
   });
   const response = await result.json();
   if (result.ok) {
-    console.log(response);
+    toast.success(response.msg);
+    return redirect("/login");
   } else {
-    console.log(response);
+    return toast.error(response.msg);
   }
-  return null;
 };
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",

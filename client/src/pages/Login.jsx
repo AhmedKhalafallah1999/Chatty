@@ -13,7 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "@emotion/styled";
-import { Form, Link } from "react-router-dom";
+import { Form, Link, redirect } from "react-router-dom";
+import { toast } from "react-toastify";
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -31,11 +32,11 @@ export const action = async ({ request }) => {
   });
   const response = await result.json();
   if (result.ok) {
-    console.log(response);
+    toast.success(response.msg);
+    return redirect("/home");
   } else {
-    console.log(response);
+    return toast.error(response.msg);
   }
-  return null;
 };
 export default function Login() {
   return (
@@ -85,6 +86,14 @@ export default function Login() {
             fontWeight={300}
           >
             Does not have an account?!
+          </Typography>
+          <Typography
+            variant="h7"
+            component={Link}
+            to="/reset-password"
+            fontWeight={300}
+          >
+            forget password?!
           </Typography>
         </CardActions>
       </Card>

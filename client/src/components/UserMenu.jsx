@@ -2,10 +2,22 @@ import { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import { Avatar, MenuItem, styled } from "@mui/material";
-import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const UserMenu = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [ItemClicked, setItemClicked] = useState("null");
+  const navigate = useNavigate();
+  const handleLogoutItem = async () => {
+    const response = await fetch("/api/v1/auth/logout");
+    const result = await response.json();
+
+    if (response.ok) {
+      toast.success(result.msg);
+      return navigate("/");
+    }
+    return toast.error(result.msg);
+  };
   const handleOpenMenu = () => {
     setShowMenu(!showMenu);
   };
@@ -44,13 +56,7 @@ const UserMenu = () => {
           <MenuItem onClick={() => handleClickedItem("my account")}>
             My account
           </MenuItem>
-          <MenuItem
-            onClick={() => handleClickedItem("logout")}
-            component={Link}
-            to="/"
-          >
-            Logout
-          </MenuItem>
+          <MenuItem onClick={() => handleLogoutItem()}>Logout</MenuItem>
         </Menu>
       </Dropdown>
     </>

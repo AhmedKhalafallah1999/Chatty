@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import LandingPage from "./pages/LandingPage";
 import { action as RegisteredAction } from "./pages/Register";
 import { action as LoggedInAction } from "./pages/Login";
+import { action as ResetAction } from "./pages/ResetPassword";
+import { action as NewPasswordAction } from "./pages/NewPassword";
 const AppContext = createContext();
 const router = createBrowserRouter([
   {
@@ -24,6 +26,16 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LandingPage isLogin />,
     action: LoggedInAction,
+  },
+  {
+    path: "/reset-password",
+    element: <LandingPage resetPassword />,
+    action: ResetAction,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <LandingPage resetNewPassword />,
+    action: NewPasswordAction,
   },
 ]);
 function App() {

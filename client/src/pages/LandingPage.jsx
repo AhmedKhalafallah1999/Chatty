@@ -4,6 +4,8 @@ import WelcomeText from "./Welcome";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import SendIcon from "@mui/icons-material/Send";
+import ResetPassword from "./ResetPassword";
+import ResetNewPassword from "./NewPassword";
 const MobileHeader = () => {
   return (
     <div className="head">
@@ -60,7 +62,13 @@ const Attribution = () => {
   );
 };
 
-const LandingPage = ({ isWelcome, isRegister, isLogin }) => {
+const LandingPage = ({
+  isWelcome,
+  isRegister,
+  isLogin,
+  resetPassword,
+  resetNewPassword,
+}) => {
   return (
     <div className="maindiv">
       <div className="mobile">
@@ -71,6 +79,8 @@ const LandingPage = ({ isWelcome, isRegister, isLogin }) => {
       {isWelcome && <WelcomeText />}
       {isRegister && <Register />}
       {isLogin && <Login />}
+      {resetPassword && <ResetPassword />}
+      {resetNewPassword && <ResetNewPassword />}
       <Attribution />
     </div>
   );
