@@ -10,9 +10,10 @@ import {
   InputAdornment,
   InputLabel,
 } from "@mui/material";
-import { Form, redirect } from "react-router-dom";
+import { Form, redirect, useNavigation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { toast } from "react-toastify";
+import loader from "../assets/images/loader.gif";
 
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -39,34 +40,46 @@ export const action = async ({ request, params }) => {
 };
 
 const ResetNewPassword = () => {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
   return (
-    <Form className="text" method="post">
-      <Card sx={{ minWidth: 275 }}>
-        <CardContent>
-          <BoxStyled sx={{ "& > :not(style)": { m: 1 } }}>
-            <FormControl variant="standard">
-              <InputLabel htmlFor="password">Enter a new password</InputLabel>
-              <Input
-                autoComplete="false"
-                id="password"
-                type="password"
-                name="password"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <AccountCircle />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-          </BoxStyled>
-        </CardContent>
-        <CardActions>
-          <Button size="medium" type="submit">
-            Reset Password
-          </Button>
-        </CardActions>
-      </Card>
-    </Form>
+    <>
+      {!isSubmitting ? (
+        <Form className="text" method="post">
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              <BoxStyled sx={{ "& > :not(style)": { m: 1 } }}>
+                <FormControl variant="standard">
+                  <InputLabel htmlFor="password">
+                    Enter a new password
+                  </InputLabel>
+                  <Input
+                    autoComplete="false"
+                    id="password"
+                    type="password"
+                    name="password"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </BoxStyled>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" type="submit">
+                Reset Password
+              </Button>
+            </CardActions>
+          </Card>
+        </Form>
+      ) : (
+        <div>
+          <img src={loader} alt="loader" width={400} height={400} />
+        </div>
+      )}
+    </>
   );
 };
 export default ResetNewPassword;

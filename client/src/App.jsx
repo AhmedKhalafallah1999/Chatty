@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createContext, useContext, useState } from "react";
 import Home from "./pages/Home";
 import LandingPage from "./pages/LandingPage";
+import Avatar from "./pages/Avatar";
 import { action as RegisteredAction } from "./pages/Register";
 import { action as LoggedInAction } from "./pages/Login";
 import { action as ResetAction } from "./pages/ResetPassword";
@@ -21,6 +22,11 @@ const router = createBrowserRouter([
     path: "/register",
     element: <LandingPage isRegister />,
     action: RegisteredAction,
+  },
+  {
+    path: "/register/avatar",
+    element: <Avatar />,
+    // action: RegisteredAction,
   },
   {
     path: "/login",

@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
     confirmPassword: String,
     resetPasswordExpiration: Date,
     resetPasswordToken: String,
+    avatarIsSet: Boolean,
+    avatarSrc: String,
   },
   { timestamps: true }
 );

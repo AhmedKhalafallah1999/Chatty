@@ -6,6 +6,7 @@ import {
   Reset,
   ResetNewPassword,
   Logout,
+  SetAvatar,
 } from "../controllers/auth.js";
 import {
   ValidateRegisterInputs,
@@ -16,6 +17,7 @@ import {
 import { authorizedUser } from "../middleware/authorized.js";
 
 router.post("/register", ValidateRegisterInputs, Register);
+router.post("/register/set-avatar", SetAvatar);
 router.get("/logout", authorizedUser, Logout);
 router.post("/login", ValidateLoginInputs, Login);
 router.post("/resetPassword", ValidateResetInputs, Reset);

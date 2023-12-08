@@ -10,9 +10,10 @@ import {
   InputAdornment,
   InputLabel,
 } from "@mui/material";
-import { Form, Link } from "react-router-dom";
+import { Form, useNavigation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { toast } from "react-toastify";
+import loader from "../assets/images/loader.gif";
 
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -31,42 +32,54 @@ export const action = async ({ request }) => {
   });
   const response = await result.json();
   if (result.ok) {
-    return toast.success(response.msg)
+    return toast.success(response.msg);
   } else {
-    return toast.error(response.msg)
+    return toast.error(response.msg);
   }
-
 };
 
 const ResetPassword = () => {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+
   return (
-    <Form className="text" method="post">
-      <Card sx={{ minWidth: 275 }}>
-        <CardContent>
-          <BoxStyled sx={{ "& > :not(style)": { m: 1 } }}>
-            <FormControl variant="standard">
-              <InputLabel htmlFor="Email">Enter your Email/Phone</InputLabel>
-              <Input
-                autoComplete="false"
-                id="email"
-                type="email"
-                name="email"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <AccountCircle />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-          </BoxStyled>
-        </CardContent>
-        <CardActions>
-          <Button size="medium" type="submit">
-            Reset
-          </Button>
-        </CardActions>
-      </Card>
-    </Form>
+    <>
+      {!isSubmitting ? (
+        <Form className="text" method="post">
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              <BoxStyled sx={{ "& > :not(style)": { m: 1 } }}>
+                <FormControl variant="standard">
+                  <InputLabel htmlFor="Email">
+                    Enter your Email/Phone
+                  </InputLabel>
+                  <Input
+                    autoComplete="false"
+                    id="email"
+                    type="email"
+                    name="email"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </BoxStyled>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" type="submit">
+                Reset
+              </Button>
+            </CardActions>
+          </Card>
+        </Form>
+      ) : (
+        <div>
+          <img src={loader} alt="loader" width={400} height={400} />
+        </div>
+      )}
+    </>
   );
 };
 export default ResetPassword;

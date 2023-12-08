@@ -13,8 +13,10 @@ import {
   Typography,
 } from "@mui/material";
 import styled from "@emotion/styled";
-import { Form, Link, redirect } from "react-router-dom";
+import { Form, Link, redirect, useNavigation } from "react-router-dom";
 import { toast } from "react-toastify";
+import loader from "../assets/images/loader.gif";
+
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -39,64 +41,74 @@ export const action = async ({ request }) => {
   }
 };
 export default function Login() {
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
   return (
-    <Form className="text" method="post">
-      <Card sx={{ minWidth: 275 }}>
-        <CardContent>
-          <BoxStyled sx={{ "& > :not(style)": { m: 1 } }}>
-            <FormControl variant="standard">
-              <InputLabel htmlFor="Email">Email</InputLabel>
-              <Input
-                autoComplete="false"
-                id="email"
-                type="email"
-                name="email"
-                startAdornment={
-                  <InputAdornment position="start">
-                    <AccountCircle />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-            <TextField
-              id="password"
-              type="password"
-              label="Password"
-              name="password"
-              autoComplete="false"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <AccountCircle />
-                  </InputAdornment>
-                ),
-              }}
-              variant="standard"
-            />
-          </BoxStyled>
-        </CardContent>
-        <CardActions>
-          <Button size="medium" type="submit">
-            Login
-          </Button>
-          <Typography
-            variant="h7"
-            component={Link}
-            to="/register"
-            fontWeight={300}
-          >
-            Does not have an account?!
-          </Typography>
-          <Typography
-            variant="h7"
-            component={Link}
-            to="/reset-password"
-            fontWeight={300}
-          >
-            forget password?!
-          </Typography>
-        </CardActions>
-      </Card>
-    </Form>
+    <>
+      {!  isSubmitting ? (
+        <Form className="text" method="post">
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              <BoxStyled sx={{ "& > :not(style)": { m: 1 } }}>
+                <FormControl variant="standard">
+                  <InputLabel htmlFor="Email">Email</InputLabel>
+                  <Input
+                    autoComplete="false"
+                    id="email"
+                    type="email"
+                    name="email"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <TextField
+                  id="password"
+                  type="password"
+                  label="Password"
+                  name="password"
+                  autoComplete="false"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="standard"
+                />
+              </BoxStyled>
+            </CardContent>
+            <CardActions>
+              <Button size="medium" type="submit">
+                Login
+              </Button>
+              <Typography
+                variant="h7"
+                component={Link}
+                to="/register"
+                fontWeight={300}
+              >
+                Does not have an account?!
+              </Typography>
+              <Typography
+                variant="h7"
+                component={Link}
+                to="/reset-password"
+                fontWeight={300}
+              >
+                forget password?!
+              </Typography>
+            </CardActions>
+          </Card>
+        </Form>
+      ) : (
+        <div>
+          <img src={loader} alt="loader" width={400} height={400} />
+        </div>
+      )}
+    </>
   );
 }

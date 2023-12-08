@@ -39,7 +39,7 @@ const BootstrapButton = styled(Button)({
   },
 });
 
-const ColorButton = styled(Button)(({ theme }) => ({
+export const ColorButton = styled(Button)(({ theme }) => ({
   textTransform: "capitalize",
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: purple[500],
@@ -47,7 +47,7 @@ const ColorButton = styled(Button)(({ theme }) => ({
     backgroundColor: purple[700],
   },
 }));
-const CustomButton = styled(Button)(({ theme }) => ({
+export const CustomButton = styled(Button)(({ theme }) => ({
   textTransform: "capitalize",
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: "#382153",

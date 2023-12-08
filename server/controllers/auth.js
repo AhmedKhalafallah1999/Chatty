@@ -7,7 +7,10 @@ import {
 } from "../utils/hashedPassword.js";
 import { GenerateToken } from "../utils/JWT.js";
 import crypto from "crypto";
-import { NotAuthinticationError } from "../errors/customError.js";
+import {
+  NotAuthinticationError,
+  UnAuthorizedError,
+} from "../errors/customError.js";
 import { log } from "console";
 import { cookie } from "express-validator";
 export const Register = async (req, res, next) => {
@@ -29,6 +32,22 @@ export const Register = async (req, res, next) => {
       return res.json({ msg: error.msg });
     }
   });
+};
+export const SetAvatar = async (req, res) => {
+  const { email, avatar } = req.body;
+  const User = await user.findOne({ email: email });
+  if (!User) {
+    throw new UnAuthorizedError(
+      "You need to register first, before picking a new avatar"
+    );
+  } else {
+    User.avatarIsSet = true;
+    User.avatarSrc = avatar;
+    await User.save();
+    return res
+      .status(StatusCodes.OK)
+      .json({ msg: "your profile image is updated successfully" });
+  }
 };
 export const Login = async (req, res) => {
   const { email, password } = req.body;
