@@ -52,6 +52,20 @@ export default function Registration() {
             <CardContent>
               <BoxStyled sx={{ "& > :not(style)": { m: 1 } }}>
                 <FormControl variant="standard">
+                  <InputLabel htmlFor="userName">Name</InputLabel>
+                  <Input
+                    id="userName"
+                    type="text"
+                    name="userName"
+                    autoComplete="false"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <AccountCircle />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <FormControl variant="standard">
                   <InputLabel htmlFor="Email">Email</InputLabel>
                   <Input
                     id="email"
