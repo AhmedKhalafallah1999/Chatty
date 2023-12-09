@@ -32,8 +32,7 @@ const Avatar = () => {
   }, []);
   const setAvatarHandler = async () => {
     const email = localStorage.getItem("user");
-
-    console.log(email);
+    localStorage.clear("user");
     const response = await fetch("/api/v1/auth/register/set-avatar", {
       method: "POST",
       headers: {
