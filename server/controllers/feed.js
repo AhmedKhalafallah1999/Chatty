@@ -3,7 +3,7 @@ import user from "../models/user.js";
 import { verifyToken } from "../utils/jwt.js";
 import { UnAuthorizedError } from "../errors/customError.js";
 export const AllUsers = async (req, res) => {
-  const Users = await user.find({}).select("userName _id");
+  const Users = await user.find({}).select("userName _id avatarSrc");
   res.status(StatusCodes.OK).json(Users);
 };
 export const CurrentUser = async (req, res) => {

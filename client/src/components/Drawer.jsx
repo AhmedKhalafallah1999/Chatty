@@ -30,8 +30,13 @@ const DrawerHeader = styled(Toolbar)(() => ({
 const DrawerSlider = ({ isSmall, theme, isBig }) => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const { sideBarOpen, ModalState, sideBarHandlerClose, socket } =
-    useChattyContext();
+  const {
+    sideBarOpen,
+    ModalState,
+    sideBarHandlerClose,
+    socket,
+    OpenChatContainerHandler,
+  } = useChattyContext();
   const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -60,8 +65,9 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
     };
     fetchUsers();
   }, []);
-  const openChatTogetherHandler = (_Id) => {
-    socket.emit("chatWith", { chatWithUserId: _Id });
+  const openChatTogetherHandler = (user) => {
+    OpenChatContainerHandler(user);
+    socket.emit("chatWith", { chatWithUserId: user._Id });
   };
 
   return (
@@ -123,16 +129,18 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
         {users.map((user, index) => {
           return (
             <ListItem key={index}>
-              <ListItemButton onClick={() => openChatTogetherHandler(user._id)}>
+              <ListItemButton onClick={() => openChatTogetherHandler(user)}>
                 <ListItemIcon>
                   {" "}
-                  {/* <img
+                  <img
                     src={`data:image/svg+xml;utf8,${encodeURIComponent(
                       user.avatarSrc
                     )}`}
                     alt={`Avatar ${index}`}
-                  /> */}
-                  <AccountCircleIcon />
+                    width={30}
+                    height={30}
+                  />
+                  {/* <AccountCircleIcon /> */}
                 </ListItemIcon>
                 <ListItemText primary={user.userName} />
               </ListItemButton>
