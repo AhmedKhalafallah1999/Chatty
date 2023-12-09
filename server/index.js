@@ -5,6 +5,7 @@ import "express-async-errors";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import test from "./routes/test.js";
+import feed from "./routes/feed.js";
 import auth from "./routes/auth.js";
 // re-factoring the created server way
 import { createServer } from "http";
@@ -21,19 +22,11 @@ app.use(express.json());
 app.use(cookieParser());
 // auth middleware
 app.use("/api/v1/auth", auth);
+// users routes
+app.use("/api/v1/feed", feed);
 // test Router
 app.use("/api/v1", test);
 
-// Not found middleware
-app.use("*", (req, res) => {
-  // res.status(StatusCodes.NOT_FOUND).json({ msg: "Not found middleware" });
-  throw new NotFoundError("Not found middleware");
-});
-// error middleware
-app.use("*", (err, req, res, next) => {
-  res.status(err.StatusCodes).json({ msg: err.message });
-  // console.log(err);
-});
 // create an io server and allow localhost
 const io = new Server(httpServer, {
   cors: {
@@ -41,21 +34,59 @@ const io = new Server(httpServer, {
     methods: ["GET", "POST"],
   },
 });
-// listen for a user is connected via socket.io-client
+
+// a map for record online and offline users
+const userSocketMap = new Map();
+
 io.on("connection", (socket) => {
-  console.log(`User Connected ${socket.id}`);
+  // console.log(`User Connected ${socket.id}`);
 
-  socket.on("send-msg", (msg) => {
-    console.log(`${msg} from ${socket.id}`);
-
-    io.emit("recieve-msg", { msg });
+  // storing the user ids with their socket ids into map
+  socket.on("associated-current-user", (payload) => {
+    userSocketMap.set(payload.currentUserId, socket.id);
+    console.log(userSocketMap);
   });
-  // socket.emit("recieve-msg", { msg: "hi" });
 
-  // socket.emit("recieve-msg", {
-  //   msg: "Welcom our new visitor",
-  // });
+  // chat together
+
+  socket.on("chatWith", (payload) => {
+    const myFriendSocketId = userSocketMap.get(payload.chatWithUserId);
+    if (myFriendSocketId) {
+      socket.on("send-msg", (payload) => {
+        io.to(myFriendSocketId).emit("recievePrivateMessage", {
+          senderSocketId: socket.id,
+          msg: payload,
+        });
+      });
+    } else {
+      return () => {
+        socket.off("chatWith");
+      };
+    }
+  });
+
+  socket.on("disconnect", () => {
+    // Find and delete the user entry from the map
+    for (const [userId, socketId] of userSocketMap.entries()) {
+      if (socketId === socket.id) {
+        userSocketMap.delete(userId);
+        break;
+      }
+    }
+  });
 });
+// Not found middleware
+app.use("*", (req, res) => {
+  // res.status(StatusCodes.NOT_FOUND).json({ msg: "Not found middleware" });
+  throw new NotFoundError("Not found middleware");
+});
+
+// error middleware
+app.use("*", (err, req, res, next) => {
+  res.status(err.StatusCodes).json({ msg: err.message });
+  // console.log(err);
+});
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {

@@ -6,14 +6,14 @@ const Feed = () => {
   const { socket, sideBarOpen } = useChattyContext();
   const [msg, setMsg] = useState([]);
   useEffect(() => {
-    socket.on("recieve-msg", (msg) => {
-      setMsg(msg.msg);
+    socket.on("recievePrivateMessage", (payload) => {
+      setMsg(payload.msg);
     });
   }, [socket]);
 
   return (
     <Box flex={sideBarOpen ? "3" : "40"} p={2} height="100vh">
-      <Typography>{msg}</Typography>
+      <Typography sx={{ textAlign: "center" }}>{msg}</Typography>
       <SendMessage />
     </Box>
   );
