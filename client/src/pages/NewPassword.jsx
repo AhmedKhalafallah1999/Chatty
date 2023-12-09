@@ -1,4 +1,4 @@
-import { AccountCircle } from "@material-ui/icons";
+// import { AccountCircle } from "@material-ui/icons";
 import {
   Box,
   Button,
@@ -15,6 +15,7 @@ import styled from "@emotion/styled";
 import { toast } from "react-toastify";
 import loader from "../assets/images/loader.gif";
 
+// eslint-disable-next-line no-unused-vars
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -60,7 +61,7 @@ const ResetNewPassword = () => {
                     name="password"
                     startAdornment={
                       <InputAdornment position="start">
-                        <AccountCircle />
+                        {/* <AccountCircle /> */}
                       </InputAdornment>
                     }
                   />

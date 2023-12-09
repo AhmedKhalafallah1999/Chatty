@@ -1,4 +1,4 @@
-import { AccountCircle } from "@material-ui/icons";
+// import { AccountCircle } from "@material-ui/icons";
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import { Form, useNavigation } from "react-router-dom";
 import styled from "@emotion/styled";
 import { toast } from "react-toastify";
 import loader from "../assets/images/loader.gif";
+// import  AccountCircle from "@mui/icons-material/AccountCircle";
 
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -60,7 +61,7 @@ const ResetPassword = () => {
                     name="email"
                     startAdornment={
                       <InputAdornment position="start">
-                        <AccountCircle />
+                        {/* <AccountCircle /> */}
                       </InputAdornment>
                     }
                   />
