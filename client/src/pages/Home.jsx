@@ -4,9 +4,10 @@ import NavBar from "../components/NavBar";
 import RightBar from "../components/RightBar";
 import SideBar from "../components/SideBar";
 import { createContext, useContext, useState } from "react";
+import GlobalStyles from "../components/Global";
 const ChattyContext = createContext();
 
-const Home = () => {
+const Home = ({ socket }) => {
   const [sideBarOpen, setSideBarState] = useState(true);
   const [ModalState, setModalState] = useState(false);
 
@@ -33,9 +34,11 @@ const Home = () => {
         OpenModalHandler,
         CloseModalHandler,
         ModalState,
+        socket,
       }}
     >
       <Box bgcolor={"background.default"} color={"text.primary"}>
+        <GlobalStyles />
         <NavBar />
         <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
           <SideBar />
@@ -46,5 +49,6 @@ const Home = () => {
     </ChattyContext.Provider>
   );
 };
+
 export const useChattyContext = () => useContext(ChattyContext);
 export default Home;

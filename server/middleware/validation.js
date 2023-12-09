@@ -27,6 +27,7 @@ export const validationHandler = (inputs) => {
   ];
 };
 export const ValidateRegisterInputs = validationHandler([
+  body("userName").notEmpty().withMessage("Please, enter a name"),
   body("email")
     .notEmpty()
     .withMessage("Plaese, enter an email...")
