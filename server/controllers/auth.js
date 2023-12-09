@@ -11,13 +11,12 @@ import {
   NotAuthinticationError,
   UnAuthorizedError,
 } from "../errors/customError.js";
-import { log } from "console";
-import { cookie } from "express-validator";
 export const Register = async (req, res, next) => {
-  const { email, password, confirmPassword } = req.body;
+  const { userName, email, password, confirmPassword } = req.body;
   const hashedPassword = await hashedPasswordHandler(password);
   const hashedConfirmPassword = await hashedPasswordHandler(confirmPassword);
   const User = await user.create({
+    userName: userName,
     email: email,
     password: hashedPassword,
     confirmPassword: hashedConfirmPassword,
