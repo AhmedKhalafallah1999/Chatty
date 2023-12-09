@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import test from "./routes/test.js";
 import auth from "./routes/auth.js";
-// refactoring the created server way
+// re-factoring the created server way
 import { createServer } from "http";
 import { NotFoundError } from "./errors/customError.js";
 // importing socket.io for real communications
