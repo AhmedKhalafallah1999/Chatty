@@ -2,14 +2,26 @@ import styled from "styled-components";
 import SendIcon from "@mui/icons-material/Send";
 import { useChattyContext } from "../pages/Home";
 const SendMessage = () => {
-  const { socket } = useChattyContext();
+  const { socket, ContactWith } = useChattyContext();
   const sendMsgHandler = (value) => {
-    socket.emit("send-msg", value);
+    if (ContactWith) {
+      socket.emit("chatWith", { chatWithUserId: ContactWith._id, msg: value });
+      // socket.emit("send-msg", value);
+    }
   };
   return (
     <SendMsgContainer>
       <div className="sendMsg">
-        <input id="send-msg-input" type="text" placeholder="enter a message" />
+        <input
+          id="send-msg-input"
+          type="text"
+          placeholder="enter a message"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              sendMsgHandler(document.getElementById("send-msg-input").value);
+            }
+          }}
+        />
         <SendIcon
           className="send-icon"
           onClick={() =>

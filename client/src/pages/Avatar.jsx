@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { CustomButton } from "../components/Button";
 import loader from "../assets/images/loader.gif";
 import { toast } from "react-toastify";
-import { redirect, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 const Avatar = () => {
   const [avatars, setAvatars] = useState([]);
   const [selectedAvatar, setSelectedAvatar] = useState();

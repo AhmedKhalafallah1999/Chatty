@@ -28,7 +28,6 @@ const Home = ({ socket }) => {
   const OpenChatContainerHandler = (contactWithUser) => {
     setContactWith(contactWithUser);
   };
-
   return (
     <ChattyContext.Provider
       value={{
