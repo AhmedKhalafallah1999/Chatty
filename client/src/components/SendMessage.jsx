@@ -6,7 +6,6 @@ const SendMessage = () => {
   const sendMsgHandler = (value) => {
     if (ContactWith) {
       socket.emit("chatWith", { chatWithUserId: ContactWith._id, msg: value });
-      // socket.emit("send-msg", value);
     }
   };
   return (
@@ -19,14 +18,16 @@ const SendMessage = () => {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               sendMsgHandler(document.getElementById("send-msg-input").value);
+              document.getElementById("send-msg-input").value = "";
             }
           }}
         />
         <SendIcon
           className="send-icon"
-          onClick={() =>
-            sendMsgHandler(document.getElementById("send-msg-input").value)
-          }
+          onClick={() => {
+            sendMsgHandler(document.getElementById("send-msg-input").value);
+            document.getElementById("send-msg-input").value = "";
+          }}
         />
       </div>
     </SendMsgContainer>

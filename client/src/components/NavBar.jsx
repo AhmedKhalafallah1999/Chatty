@@ -51,7 +51,7 @@ const NavBar = () => {
   const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="fixed">
       <StyledToolBar>
         <Typography
           variant="h6"

@@ -12,6 +12,7 @@ import { createServer } from "http";
 import { NotFoundError } from "./errors/customError.js";
 // importing socket.io for real communications
 import { Server } from "socket.io";
+import message from "./models/message.js";
 const app = express();
 const httpServer = createServer(app);
 
@@ -49,16 +50,35 @@ io.on("connection", (socket) => {
 
   // chat together
 
-  socket.on("chatWith", (payload) => {
+  socket.on("chatWith", async (payload) => {
     const myFriendSocketId = userSocketMap.get(payload.chatWithUserId);
-    if (myFriendSocketId) {
+    let myUserId;
+    for (const [key, value] of userSocketMap.entries()) {
+      if (value === socket.id) {
+        myUserId = key;
+        break; // Stop the loop once the key is found
+      }
+    }
+    const Message = await message.create({
+      sender: myUserId,
+      reciver: payload.chatWithUserId,
+      message: payload.msg,
+    });
+    console.log(Message);
+    await Message.save();
+    if (myFriendSocketId === socket.id) {
+      io.to(socket.id).emit("recievePrivateMessage", {
+        senderSocketId: socket.id,
+        msg: Message,
+      });
+    } else if (myFriendSocketId) {
       io.to(myFriendSocketId).emit("recievePrivateMessage", {
         senderSocketId: socket.id,
-        msg: payload.msg,
+        msg: Message,
       });
       io.to(socket.id).emit("recievePrivateMessage", {
         senderSocketId: socket.id,
-        msg: payload.msg,
+        msg: Message,
       });
     } else {
       console.log(`this user with ${socket.id} is offline`);
