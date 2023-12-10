@@ -9,7 +9,7 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import styled from "@emotion/styled";
@@ -57,9 +57,7 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
     const fetchUsers = async () => {
       const response = await fetch("/api/v1/feed/all-users");
       const result = await response.json();
-      console.log(result);
       if (response.ok) {
-        console.log(result);
         setUsers(result);
       }
     };
@@ -67,7 +65,6 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
   }, []);
   const openChatTogetherHandler = (user) => {
     OpenChatContainerHandler(user);
-    socket.emit("chatWith", { chatWithUserId: user._Id });
   };
 
   return (

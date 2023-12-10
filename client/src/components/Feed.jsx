@@ -6,7 +6,7 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useEffect, useState } from "react";
 const Feed = () => {
   const { socket, sideBarOpen, ContactWith } = useChattyContext();
-  const [msg, setMsg] = useState([]);
+  const [msg, setMsg] = useState();
   useEffect(() => {
     socket.on("recievePrivateMessage", (payload) => {
       setMsg(payload.msg);

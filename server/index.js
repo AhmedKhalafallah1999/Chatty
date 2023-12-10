@@ -39,7 +39,7 @@ const io = new Server(httpServer, {
 const userSocketMap = new Map();
 
 io.on("connection", (socket) => {
-  // console.log(`User Connected ${socket.id}`);
+  console.log(`User Connected ${socket.id}`);
 
   // storing the user ids with their socket ids into map
   socket.on("associated-current-user", (payload) => {
@@ -52,16 +52,16 @@ io.on("connection", (socket) => {
   socket.on("chatWith", (payload) => {
     const myFriendSocketId = userSocketMap.get(payload.chatWithUserId);
     if (myFriendSocketId) {
-      socket.on("send-msg", (payload) => {
-        io.to(myFriendSocketId).emit("recievePrivateMessage", {
-          senderSocketId: socket.id,
-          msg: payload,
-        });
+      io.to(myFriendSocketId).emit("recievePrivateMessage", {
+        senderSocketId: socket.id,
+        msg: payload.msg,
+      });
+      io.to(socket.id).emit("recievePrivateMessage", {
+        senderSocketId: socket.id,
+        msg: payload.msg,
       });
     } else {
-      return () => {
-        socket.off("chatWith");
-      };
+      console.log(`this user with ${socket.id} is offline`);
     }
   });
 
