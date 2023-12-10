@@ -5,7 +5,7 @@ import LatestStories from "./LatestStories";
 const RightBar = () => {
   return (
     <Box flex={1} p={2} sx={{ display: { xs: "none", md: "block" } }}>
-      <Box>
+      <Box mt={10}>
         <Typography variant="h6">Online users</Typography>
         <OnlineUsers />
         <Typography variant="h6">Lates Conversations</Typography>

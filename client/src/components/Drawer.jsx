@@ -36,6 +36,7 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
     sideBarHandlerClose,
     socket,
     OpenChatContainerHandler,
+    currentUserDataHandler,
   } = useChattyContext();
   const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
   useEffect(() => {
@@ -43,6 +44,7 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
       const response = await fetch("/api/v1/feed/current-user");
       const result = await response.json();
       if (response.ok) {
+        currentUserDataHandler(result.currentUserId.userId);
         socket.emit("associated-current-user", {
           currentUserId: result.currentUserId.userId,
         });
