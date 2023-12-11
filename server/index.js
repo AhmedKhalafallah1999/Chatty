@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
       reciver: payload.chatWithUserId,
       message: payload.msg,
     });
-    console.log(Message);
+    // console.log(Message);
     await Message.save();
     if (myFriendSocketId === socket.id) {
       io.to(socket.id).emit("recievePrivateMessage", {

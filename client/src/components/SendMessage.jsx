@@ -2,7 +2,7 @@ import styled from "styled-components";
 import SendIcon from "@mui/icons-material/Send";
 import { useChattyContext } from "../pages/Home";
 const SendMessage = () => {
-  const { socket, ContactWith } = useChattyContext();
+  const { socket, ContactWith, sideBarOpen } = useChattyContext();
   const sendMsgHandler = (value) => {
     if (ContactWith) {
       socket.emit("chatWith", { chatWithUserId: ContactWith._id, msg: value });
@@ -10,7 +10,7 @@ const SendMessage = () => {
   };
   return (
     <SendMsgContainer>
-      <div className="sendMsg">
+      <div className={sideBarOpen ? "sendMsg" : "sendMsg full-width"}>
         <input
           id="send-msg-input"
           type="text"
@@ -43,6 +43,10 @@ const SendMsgContainer = styled.div`
     bottom: 2rem;
     position: fixed;
   }
+  .sendMsg.full-width {
+    width: 71.5%;
+  }
+
   input {
     width: 100%;
     height: 50px;
@@ -64,10 +68,24 @@ const SendMsgContainer = styled.div`
     .sendMsg {
       width: 90%;
     }
+    .sendMsg.full-width {
+      width: 90%;
+    }
   }
-  @media screen and (min-width: 900px) and (max-width: 1200px) {
+  @media screen and (min-width: 900px) and (max-width: 1100px) {
     .sendMsg {
       width: 60%;
+    }
+    .sendMsg.full-width {
+      width: 60%;
+    }
+  }
+  @media screen and (min-width: 1100px) and (max-width: 1300px) {
+    .sendMsg {
+      width: 60%;
+    }
+    .sendMsg.full-width {
+      width: 65%;
     }
   }
 `;

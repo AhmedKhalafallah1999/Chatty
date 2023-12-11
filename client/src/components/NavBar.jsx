@@ -46,8 +46,14 @@ const UserIcons = styled(Box)(({ theme }) => ({
 }));
 
 const NavBar = () => {
-  const { sideBarHandlerOpen, sideBarOpen, OpenModalHandler, ModalState } =
-    useChattyContext();
+  const {
+    sideBarHandlerOpen,
+    sideBarOpen,
+    OpenModalHandler,
+    ModalState,
+    rightBarOpen,
+    rightBarHandlerOpen,
+  } = useChattyContext();
   const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
 
   return (
@@ -80,7 +86,14 @@ const NavBar = () => {
         <Search placeholder="Search...">
           <InputBase placeholder="Search..."></InputBase>
         </Search>
+
         <Icons>
+          {!rightBarOpen && (
+            <IconButton sx={{ color: "inherit" }} onClick={rightBarHandlerOpen}>
+              {" "}
+              <MenuRoundedIcon sx={{ display: { xs: "none", md: "block" } }} />
+            </IconButton>
+          )}
           <Badge
             anchorOrigin={{
               vertical: "top",
