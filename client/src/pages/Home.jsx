@@ -9,6 +9,7 @@ const ChattyContext = createContext();
 
 const Home = ({ socket }) => {
   const [sideBarOpen, setSideBarState] = useState(true);
+  const [rightBarOpen, setRightBarState] = useState(true);
   const [ModalState, setModalState] = useState(false);
   const [ContactWith, setContactWith] = useState();
   const [CurrentUser, setCurrentUser] = useState();
@@ -18,6 +19,13 @@ const Home = ({ socket }) => {
   };
   const sideBarHandlerClose = () => {
     setSideBarState(false);
+  };
+
+  const rightBarHandlerOpen = () => {
+    setRightBarState(true);
+  };
+  const rightBarHandlerClose = () => {
+    setRightBarState(false);
   };
   const OpenModalHandler = () => {
     setModalState(true);
@@ -38,6 +46,9 @@ const Home = ({ socket }) => {
         sideBarHandlerOpen,
         sideBarHandlerClose,
         sideBarOpen,
+        rightBarHandlerClose,
+        rightBarHandlerOpen,
+        rightBarOpen,
         OpenModalHandler,
         CloseModalHandler,
         ModalState,
