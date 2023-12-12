@@ -1,8 +1,24 @@
 import styled from "styled-components";
 import SendIcon from "@mui/icons-material/Send";
 import { useChattyContext } from "../pages/Home";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 const SendMessage = () => {
-  const { socket, ContactWith, sideBarOpen } = useChattyContext();
+  const { socket, ContactWith, sideBarOpen, CurrentUserFullData } =
+    useChattyContext();
+  useEffect(() => {
+    const notifyOfflineHandler = (payload) => {
+      console.log("fffffffffffff");
+      toast.error(`${ContactWith.userName} ${payload.msg}`);
+    };
+
+    socket.on("notify-is-offline", notifyOfflineHandler);
+
+    return () => {
+      // Cleanup the listener when the component unmounts
+      socket.off("notify-is-offline", notifyOfflineHandler);
+    };
+  }, [socket, ContactWith]);
   const sendMsgHandler = (value) => {
     if (ContactWith) {
       socket.emit("chatWith", { chatWithUserId: ContactWith._id, msg: value });
@@ -15,6 +31,15 @@ const SendMessage = () => {
           id="send-msg-input"
           type="text"
           placeholder="enter a message"
+          onChange={() => {
+            // console.log(ContactWith);
+            if (ContactWith) {
+              socket.emit("someone-is-typing", {
+                msg: `${CurrentUserFullData.userName} is typing ...`,
+                contactWith: ContactWith,
+              });
+            }
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               sendMsgHandler(document.getElementById("send-msg-input").value);

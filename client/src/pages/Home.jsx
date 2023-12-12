@@ -11,8 +11,11 @@ const Home = ({ socket }) => {
   const [sideBarOpen, setSideBarState] = useState(true);
   const [rightBarOpen, setRightBarState] = useState(true);
   const [ModalState, setModalState] = useState(false);
+  const [ModalRightState, setModalRightState] = useState(false);
   const [ContactWith, setContactWith] = useState();
   const [CurrentUser, setCurrentUser] = useState();
+  const [CurrentUserFullData, setCurrentUserFullData] = useState([]);
+  const [notifyIsTyping, setNotifyIsTyping] = useState();
 
   const sideBarHandlerOpen = () => {
     setSideBarState(true);
@@ -34,11 +37,21 @@ const Home = ({ socket }) => {
   const CloseModalHandler = () => {
     setModalState(false);
   };
+  const CloseRightModalHandler = () => {
+    setModalRightState(false);
+  };
+  const OpenRightModalHandler = () => {
+    setModalRightState(true);
+  };
   const OpenChatContainerHandler = (contactWithUser) => {
     setContactWith(contactWithUser);
   };
-  const currentUserDataHandler = (currentUserId) => {
+  const currentUserDataHandler = (currentUserId, currentUserFullData) => {
     setCurrentUser(currentUserId);
+    setCurrentUserFullData(currentUserFullData);
+  };
+  const notifyIsTypingHandler = (msg) => {
+    setNotifyIsTyping(msg);
   };
   return (
     <ChattyContext.Provider
@@ -48,15 +61,21 @@ const Home = ({ socket }) => {
         sideBarOpen,
         rightBarHandlerClose,
         rightBarHandlerOpen,
+        CloseRightModalHandler,
+        OpenRightModalHandler,
         rightBarOpen,
         OpenModalHandler,
         CloseModalHandler,
         ModalState,
+        ModalRightState,
         socket,
         OpenChatContainerHandler,
         ContactWith,
         currentUserDataHandler,
         CurrentUser,
+        CurrentUserFullData,
+        notifyIsTypingHandler,
+        notifyIsTyping,
       }}
     >
       <Box bgcolor={"background.default"} color={"text.primary"}>

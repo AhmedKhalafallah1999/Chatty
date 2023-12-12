@@ -11,6 +11,7 @@ import {
 import { Mail, Pets, Notifications } from "@mui/icons-material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import BasicModal from "./Modal";
+import BasicRightModal from "./ModalRight";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import UserMenu from "./UserMenu";
 import { useChattyContext } from "../pages/Home";
@@ -51,6 +52,8 @@ const NavBar = () => {
     sideBarOpen,
     OpenModalHandler,
     ModalState,
+    OpenRightModalHandler,
+    ModalRightState,
     rightBarOpen,
     rightBarHandlerOpen,
   } = useChattyContext();
@@ -87,6 +90,13 @@ const NavBar = () => {
           <InputBase placeholder="Search..."></InputBase>
         </Search>
 
+        {!ModalRightState && (
+          <IconButton sx={{ color: "inherit" }} onClick={OpenRightModalHandler}>
+            {" "}
+            <MenuRoundedIcon sx={{ display: { xs: "block", md: "none" } }} />
+          </IconButton>
+        )}
+        {ModalRightState && <BasicRightModal />}
         <Icons>
           {!rightBarOpen && (
             <IconButton sx={{ color: "inherit" }} onClick={rightBarHandlerOpen}>
@@ -128,6 +138,12 @@ const NavBar = () => {
           <UserMenu />
         </Icons>
         <UserIcons>
+          {/* {!rightBarOpen && (
+            <IconButton sx={{ color: "inherit" }} onClick={rightBarHandlerOpen}>
+              {" "}
+              <MenuRoundedIcon />
+            </IconButton>
+          )} */}
           <Typography variant="h6">User Name</Typography>
           <UserMenu />
         </UserIcons>

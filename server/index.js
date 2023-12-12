@@ -48,6 +48,15 @@ io.on("connection", (socket) => {
     console.log(userSocketMap);
   });
 
+  // to handling user is typing notify
+  socket.on("someone-is-typing", (payload) => {
+    const myFriendSocketId = userSocketMap.get(payload.contactWith._id);
+    if (myFriendSocketId) {
+      io.to(myFriendSocketId).emit("notify-is-typing", {
+        msg: payload.msg,
+      });
+    }
+  });
   // chat together
 
   socket.on("chatWith", async (payload) => {
@@ -68,20 +77,27 @@ io.on("connection", (socket) => {
     await Message.save();
     if (myFriendSocketId === socket.id) {
       io.to(socket.id).emit("recievePrivateMessage", {
-        senderSocketId: socket.id,
+        // senderSocketId: socket.id,
         msg: Message,
       });
     } else if (myFriendSocketId) {
       io.to(myFriendSocketId).emit("recievePrivateMessage", {
-        senderSocketId: socket.id,
+        // senderSocketId: socket.id,
         msg: Message,
       });
       io.to(socket.id).emit("recievePrivateMessage", {
-        senderSocketId: socket.id,
+        // senderSocketId: socket.id,
         msg: Message,
       });
     } else {
       console.log(`this user with ${socket.id} is offline`);
+      io.to(socket.id).emit("recievePrivateMessage", {
+        // senderSocketId: socket.id,
+        msg: Message,
+      });
+      io.to(socket.id).emit("notify-is-offline", {
+        msg: "is offline now, you can send as soon as be available, you can take a response",
+      });
     }
   });
 
