@@ -12,6 +12,7 @@ const Feed = () => {
   // console.log(ModalState);
   // console.log(CurrentUser, ContactWith);
   const [messages, setMsg] = useState([]);
+  const [notifyIsTyping, setNotifyIsTyping] = useState();
   const [prevMessages, setPrevMessages] = useState([]);
   const [showFullMessage, setShowFullMessage] = useState([]);
   useEffect(() => {
@@ -21,6 +22,7 @@ const Feed = () => {
           `/api/v1/feed/previousMsg/${ContactWith._id}`
         );
         const result = await response.json();
+        setNotifyIsTyping("");
         if (response.ok) {
           setPrevMessages(result.messages);
         } else {
@@ -34,6 +36,7 @@ const Feed = () => {
   useEffect(() => {
     const handleReceivePrivateMessage = (payload) => {
       setMsg((prevMessages) => [...prevMessages, payload.msg]);
+      setNotifyIsTyping("");
     };
 
     socket.on("recievePrivateMessage", handleReceivePrivateMessage);
@@ -42,6 +45,17 @@ const Feed = () => {
       socket.off("recievePrivateMessage", handleReceivePrivateMessage);
     };
   }, [socket]);
+  useEffect(() => {
+    const handleReceivePrivateMessage = (payload) => {
+      setNotifyIsTyping(payload.msg);
+    };
+
+    socket.on("notify-is-typing", handleReceivePrivateMessage);
+
+    return () => {
+      socket.off("notify-is-typing", handleReceivePrivateMessage);
+    };
+  }, [socket, ContactWith]);
   useEffect(() => {
     const handleReceivePrivateMessage = () => {
       setMsg([]);
@@ -70,6 +84,7 @@ const Feed = () => {
                   height={80}
                 />
                 <h2>{ContactWith.userName}</h2>
+                <p>{notifyIsTyping}</p>
               </div>
               <div className="setting">
                 <PowerSettingsNewIcon />

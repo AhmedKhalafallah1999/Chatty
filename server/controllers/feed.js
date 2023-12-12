@@ -12,10 +12,12 @@ export const CurrentUser = async (req, res) => {
   const token = req.cookies["Authorization"];
   if (token) {
     const decoded = verifyToken(token);
-    return res.status(StatusCodes.OK).json({ currentUserId: decoded });
+    const User = await user.findOne({ _id: decoded.userId });
+    return res
+      .status(StatusCodes.OK)
+      .json({ currentUserId: decoded, currentUser: User });
   }
   throw new UnAuthorizedError("sorry, session expired");
-
   // console.log(token);
 };
 export const previousMsg = async (req, res) => {
@@ -37,9 +39,7 @@ export const previousMsg = async (req, res) => {
         },
       ],
     });
-    return res
-      .status(StatusCodes.OK)
-      .json({ messages: messages });
+    return res.status(StatusCodes.OK).json({ messages: messages });
     // console.log(messages);
   }
   throw new UnAuthorizedError("sorry, faild to load past messages");

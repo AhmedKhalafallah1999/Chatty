@@ -13,6 +13,7 @@ const Home = ({ socket }) => {
   const [ModalState, setModalState] = useState(false);
   const [ContactWith, setContactWith] = useState();
   const [CurrentUser, setCurrentUser] = useState();
+  const [CurrentUserFullData, setCurrentUserFullData] = useState([]);
 
   const sideBarHandlerOpen = () => {
     setSideBarState(true);
@@ -37,8 +38,9 @@ const Home = ({ socket }) => {
   const OpenChatContainerHandler = (contactWithUser) => {
     setContactWith(contactWithUser);
   };
-  const currentUserDataHandler = (currentUserId) => {
+  const currentUserDataHandler = (currentUserId, currentUserFullData) => {
     setCurrentUser(currentUserId);
+    setCurrentUserFullData(currentUserFullData);
   };
   return (
     <ChattyContext.Provider
@@ -57,6 +59,7 @@ const Home = ({ socket }) => {
         ContactWith,
         currentUserDataHandler,
         CurrentUser,
+        CurrentUserFullData,
       }}
     >
       <Box bgcolor={"background.default"} color={"text.primary"}>

@@ -2,7 +2,8 @@ import styled from "styled-components";
 import SendIcon from "@mui/icons-material/Send";
 import { useChattyContext } from "../pages/Home";
 const SendMessage = () => {
-  const { socket, ContactWith, sideBarOpen } = useChattyContext();
+  const { socket, ContactWith, sideBarOpen, CurrentUserFullData } =
+    useChattyContext();
   const sendMsgHandler = (value) => {
     if (ContactWith) {
       socket.emit("chatWith", { chatWithUserId: ContactWith._id, msg: value });
@@ -15,6 +16,15 @@ const SendMessage = () => {
           id="send-msg-input"
           type="text"
           placeholder="enter a message"
+          onChange={() => {
+            console.log(ContactWith);
+            if (ContactWith) {
+              socket.emit("someone-is-typing", {
+                msg: `${CurrentUserFullData.userName} is typing ...`,
+                contactWith: ContactWith,
+              });
+            }
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               sendMsgHandler(document.getElementById("send-msg-input").value);

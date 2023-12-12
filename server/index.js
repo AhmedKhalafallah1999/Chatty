@@ -48,6 +48,15 @@ io.on("connection", (socket) => {
     console.log(userSocketMap);
   });
 
+  // to handling user is typing notify
+  socket.on("someone-is-typing", (payload) => {
+    const myFriendSocketId = userSocketMap.get(payload.contactWith._id);
+    if (myFriendSocketId) {
+      io.to(myFriendSocketId).emit("notify-is-typing", {
+        msg: payload.msg,
+      });
+    }
+  });
   // chat together
 
   socket.on("chatWith", async (payload) => {

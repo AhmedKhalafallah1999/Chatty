@@ -44,7 +44,8 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
       const response = await fetch("/api/v1/feed/current-user");
       const result = await response.json();
       if (response.ok) {
-        currentUserDataHandler(result.currentUserId.userId);
+        console.log(result.currentUser);
+        currentUserDataHandler(result.currentUserId.userId,result.currentUser);
         socket.emit("associated-current-user", {
           currentUserId: result.currentUserId.userId,
         });
