@@ -6,13 +6,21 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import LanguageDetector from "./LanguageDetector";
+import welcome from "../assets/images/wlcome.gif";
 
 const Feed = () => {
-  const { socket, sideBarOpen, ContactWith, CurrentUser } = useChattyContext();
+  const {
+    socket,
+    sideBarOpen,
+    ContactWith,
+    CurrentUser,
+    notifyIsTypingHandler,
+    notifyIsTyping,
+  } = useChattyContext();
   // console.log(ModalState);
   // console.log(CurrentUser, ContactWith);
   const [messages, setMsg] = useState([]);
-  const [notifyIsTyping, setNotifyIsTyping] = useState();
+  // const [notifyIsTyping, setNotifyIsTyping] = useState();
   const [prevMessages, setPrevMessages] = useState([]);
   const [showFullMessage, setShowFullMessage] = useState([]);
   useEffect(() => {
@@ -22,7 +30,7 @@ const Feed = () => {
           `/api/v1/feed/previousMsg/${ContactWith._id}`
         );
         const result = await response.json();
-        setNotifyIsTyping("");
+        notifyIsTypingHandler("");
         if (response.ok) {
           setPrevMessages(result.messages);
         } else {
@@ -36,7 +44,7 @@ const Feed = () => {
   useEffect(() => {
     const handleReceivePrivateMessage = (payload) => {
       setMsg((prevMessages) => [...prevMessages, payload.msg]);
-      setNotifyIsTyping("");
+      notifyIsTypingHandler("");
     };
 
     socket.on("recievePrivateMessage", handleReceivePrivateMessage);
@@ -47,7 +55,7 @@ const Feed = () => {
   }, [socket]);
   useEffect(() => {
     const handleReceivePrivateMessage = (payload) => {
-      setNotifyIsTyping(payload.msg);
+      notifyIsTypingHandler(payload.msg);
     };
 
     socket.on("notify-is-typing", handleReceivePrivateMessage);
@@ -70,150 +78,180 @@ const Feed = () => {
 
   return (
     <Box flex={sideBarOpen ? "3" : "40"} p={2} height="100vh">
-      <FeedContainer>
-        {ContactWith && (
-          <>
-            <header className={sideBarOpen ? "header" : "header full-width"}>
-              <div className="user">
-                <img
-                  src={`data:image/svg+xml;utf8,${encodeURIComponent(
-                    ContactWith.avatarSrc
-                  )}`}
-                  alt={`Avatar ${ContactWith.userName}`}
-                  width={80}
-                  height={80}
-                />
-                <h2>{ContactWith.userName}</h2>
-                <p>{notifyIsTyping}</p>
-              </div>
-              <div className="setting">
-                <PowerSettingsNewIcon />
-              </div>
-            </header>
-          </>
-        )}
-        <ul className="prevMsg">
-          {prevMessages.map((content, index) => (
-            <li
-              key={index}
-              className={`${
-                CurrentUser === content.sender ? "senderClass" : "recieverClass"
-              } ${
-                LanguageDetector(content.message) === "arabic"
-                  ? "arabic"
-                  : "english"
-              }`}
-            >
-              {content.message.split(/\s+/).length > 30 ? (
-                <>
-                  {showFullMessage[index] ? (
-                    <>
-                      {content.message}
-                      <span className="time-date">{`${new Date(
-                        content.timestamp
-                      ).toLocaleDateString()} ${new Date(
-                        content.timestamp
-                      ).toLocaleTimeString()}`}</span>
-                    </>
-                  ) : (
-                    <>
+      {!ContactWith ? (
+        <WelcomingContainer>
+          <img src={welcome} alt="loader" />
+        </WelcomingContainer>
+      ) : (
+        <FeedContainer>
+          {ContactWith && (
+            <>
+              <header className={sideBarOpen ? "header" : "header full-width"}>
+                <div className="user">
+                  <img
+                    src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                      ContactWith.avatarSrc
+                    )}`}
+                    alt={`Avatar ${ContactWith.userName}`}
+                    width={80}
+                    height={80}
+                  />
+                  <div>
+                    <h2>{ContactWith.userName}</h2>
+                    <p className="notify-typing">{notifyIsTyping}</p>
+                  </div>
+                </div>
+                <div className="setting">
+                  <PowerSettingsNewIcon />
+                </div>
+              </header>
+            </>
+          )}
+          <ul className="prevMsg">
+            {prevMessages.map((content, index) => (
+              <li
+                key={index}
+                className={`${
+                  CurrentUser === content.sender
+                    ? "senderClass"
+                    : "recieverClass"
+                } ${
+                  LanguageDetector(content.message) === "arabic"
+                    ? "arabic"
+                    : "english"
+                }`}
+              >
+                {content.message.split(/\s+/).length > 30 ? (
+                  <>
+                    {showFullMessage[index] ? (
                       <>
-                        {content.message.split(/\s+/).slice(0, 30).join(" ")}
-                        <span className={"time-date"}>{`${new Date(
-                          content.timestamp
-                        ).toLocaleDateString()} ${new Date(
-                          content.timestamp
-                        ).toLocaleTimeString()}`}</span>
-                      </>
-                      <span
-                        className="readMore"
-                        onClick={() => handleReadMore(index)}
-                      >
-                        {LanguageDetector(content.message) === "arabic"
-                          ? "قراءة المزيد"
-                          : "read more ..."}
-                      </span>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  {content.message}
-                  <span className="time-date">{`${new Date(
-                    content.timestamp
-                  ).toLocaleDateString()} ${new Date(
-                    content.timestamp
-                  ).toLocaleTimeString()}`}</span>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-        <ul className="newMsg">
-          {messages.map((content, index) => (
-            <li
-              key={index}
-              className={`${
-                CurrentUser === content.sender ? "senderClass" : "recieverClass"
-              } ${
-                LanguageDetector(content.message) === "arabic"
-                  ? "arabic"
-                  : "english"
-              }`}
-            >
-              {content.message.split(/\s+/).length > 30 ? (
-                <>
-                  {showFullMessage[index] ? (
-                    <>
-                      {content.message}
-                      <span className="time-date">{`${new Date(
-                        content.timestamp
-                      ).toLocaleDateString()} ${new Date(
-                        content.timestamp
-                      ).toLocaleTimeString()}`}</span>
-                    </>
-                  ) : (
-                    <>
-                      <>
-                        {content.message.split(/\s+/).slice(0, 30).join(" ")}
+                        {content.message}
                         <span className="time-date">{`${new Date(
                           content.timestamp
                         ).toLocaleDateString()} ${new Date(
                           content.timestamp
                         ).toLocaleTimeString()}`}</span>
                       </>
-                      <span
-                        className="readMore"
-                        onClick={() => handleReadMore(index)}
-                      >
-                        {LanguageDetector(content.message) === "arabic"
-                          ? "قراءة المزيد"
-                          : "read more..."}
-                      </span>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  {content.message}
-                  <span className="time-date">{`${new Date(
-                    content.timestamp
-                  ).toLocaleDateString()} ${new Date(
-                    content.timestamp
-                  ).toLocaleTimeString()}`}</span>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-        <SendMessage />
-      </FeedContainer>
+                    ) : (
+                      <>
+                        <>
+                          {content.message.split(/\s+/).slice(0, 30).join(" ")}
+                          <span className={"time-date"}>{`${new Date(
+                            content.timestamp
+                          ).toLocaleDateString()} ${new Date(
+                            content.timestamp
+                          ).toLocaleTimeString()}`}</span>
+                        </>
+                        <span
+                          className="readMore"
+                          onClick={() => handleReadMore(index)}
+                        >
+                          {LanguageDetector(content.message) === "arabic"
+                            ? "قراءة المزيد"
+                            : "read more ..."}
+                        </span>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {content.message}
+                    <span className="time-date">{`${new Date(
+                      content.timestamp
+                    ).toLocaleDateString()} ${new Date(
+                      content.timestamp
+                    ).toLocaleTimeString()}`}</span>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+          <ul className="newMsg">
+            {messages.map((content, index) => (
+              <li
+                key={index}
+                className={`${
+                  CurrentUser === content.sender
+                    ? "senderClass"
+                    : "recieverClass"
+                } ${
+                  LanguageDetector(content.message) === "arabic"
+                    ? "arabic"
+                    : "english"
+                }`}
+              >
+                {content.message.split(/\s+/).length > 30 ? (
+                  <>
+                    {showFullMessage[index] ? (
+                      <>
+                        {content.message}
+                        <span className="time-date">{`${new Date(
+                          content.timestamp
+                        ).toLocaleDateString()} ${new Date(
+                          content.timestamp
+                        ).toLocaleTimeString()}`}</span>
+                      </>
+                    ) : (
+                      <>
+                        <>
+                          {content.message.split(/\s+/).slice(0, 30).join(" ")}
+                          <span className="time-date">{`${new Date(
+                            content.timestamp
+                          ).toLocaleDateString()} ${new Date(
+                            content.timestamp
+                          ).toLocaleTimeString()}`}</span>
+                        </>
+                        <span
+                          className="readMore"
+                          onClick={() => handleReadMore(index)}
+                        >
+                          {LanguageDetector(content.message) === "arabic"
+                            ? "قراءة المزيد"
+                            : "read more..."}
+                        </span>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {content.message}
+                    <span className="time-date">{`${new Date(
+                      content.timestamp
+                    ).toLocaleDateString()} ${new Date(
+                      content.timestamp
+                    ).toLocaleTimeString()}`}</span>
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+          <SendMessage />
+        </FeedContainer>
+      )}
     </Box>
   );
 };
-
+const WelcomingContainer = styled.div`
+  img {
+    width: 1000px;
+    height: 700px;
+  }
+  @media screen and (max-width: 900px) {
+    img {
+      width: 500px;
+      height: 500px;
+    }
+  }
+  @media screen and (min-width: 900px) and (max-width: 1100px) {
+    img {
+      width: 700px;
+      height: 600px;
+    }
+  }
+`;
 const FeedContainer = styled.div`
   overflow-y: scroll;
+
   .header {
     display: flex;
     align-items: center;
@@ -236,6 +274,9 @@ const FeedContainer = styled.div`
       cursor: pointer;
       padding: 6px;
       border-radius: 50%;
+    }
+    .notify-typing {
+      font-size: 10px;
     }
   }
   .header.full-width {

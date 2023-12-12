@@ -77,20 +77,27 @@ io.on("connection", (socket) => {
     await Message.save();
     if (myFriendSocketId === socket.id) {
       io.to(socket.id).emit("recievePrivateMessage", {
-        senderSocketId: socket.id,
+        // senderSocketId: socket.id,
         msg: Message,
       });
     } else if (myFriendSocketId) {
       io.to(myFriendSocketId).emit("recievePrivateMessage", {
-        senderSocketId: socket.id,
+        // senderSocketId: socket.id,
         msg: Message,
       });
       io.to(socket.id).emit("recievePrivateMessage", {
-        senderSocketId: socket.id,
+        // senderSocketId: socket.id,
         msg: Message,
       });
     } else {
       console.log(`this user with ${socket.id} is offline`);
+      io.to(socket.id).emit("recievePrivateMessage", {
+        // senderSocketId: socket.id,
+        msg: Message,
+      });
+      io.to(socket.id).emit("notify-is-offline", {
+        msg: "is offline now, you can send as soon as be available, you can take a response",
+      });
     }
   });
 

@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Typography,
 } from "@mui/material";
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
@@ -37,15 +38,18 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
     socket,
     OpenChatContainerHandler,
     currentUserDataHandler,
+    notifyIsTyping,
+    ContactWith,
   } = useChattyContext();
+  // console.log(ContactWith);
   const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
   useEffect(() => {
     const fetchCurrentUser = async () => {
       const response = await fetch("/api/v1/feed/current-user");
       const result = await response.json();
       if (response.ok) {
-        console.log(result.currentUser);
-        currentUserDataHandler(result.currentUserId.userId,result.currentUser);
+        // console.log(result.currentUser);
+        currentUserDataHandler(result.currentUserId.userId, result.currentUser);
         socket.emit("associated-current-user", {
           currentUserId: result.currentUserId.userId,
         });
@@ -142,7 +146,15 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
                   />
                   {/* <AccountCircleIcon /> */}
                 </ListItemIcon>
-                <ListItemText primary={user.userName} />
+                <div>
+                  <ListItemText primary={user.userName} />
+                  {ContactWith && ContactWith._id === user._id && (
+                    // <ListItemText secondary={notifyIsTyping} />
+                    <Typography variant="body2" style={{ fontSize: "10px" }}>
+                      {notifyIsTyping}
+                    </Typography>
+                  )}
+                </div>
               </ListItemButton>
             </ListItem>
           );
