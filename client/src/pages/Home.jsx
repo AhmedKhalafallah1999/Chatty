@@ -15,7 +15,7 @@ const Home = ({ socket }) => {
   const [ContactWith, setContactWith] = useState();
   const [CurrentUser, setCurrentUser] = useState();
   const [CurrentUserFullData, setCurrentUserFullData] = useState([]);
-  const [notifyIsTyping, setNotifyIsTyping] = useState();
+  const [notifyIsTyping, setNotifyIsTyping] = useState([]);
 
   const sideBarHandlerOpen = () => {
     setSideBarState(true);
@@ -50,8 +50,8 @@ const Home = ({ socket }) => {
     setCurrentUser(currentUserId);
     setCurrentUserFullData(currentUserFullData);
   };
-  const notifyIsTypingHandler = (msg) => {
-    setNotifyIsTyping(msg);
+  const notifyIsTypingHandler = (msg, senderId) => {
+    setNotifyIsTyping([msg, senderId]);
   };
   return (
     <ChattyContext.Provider

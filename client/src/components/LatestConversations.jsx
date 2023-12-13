@@ -6,75 +6,60 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-
+import { useEffect, useState } from "react";
+import { useChattyContext } from "../pages/Home";
 export default function LatestConversations() {
+  const { CurrentUserFullData } = useChattyContext();
+  const [threePreviousChats, setThreePreviousChats] = useState([]);
+  useEffect(() => {
+    const threePreviousChatsHandler = async () => {
+      const response = await fetch("/api/v1/feed/previousThreeChats");
+      const result = await response.json();
+      if (response.ok) {
+        // console.log(result);
+        setThreePreviousChats(result.messages);
+      }
+    };
+    threePreviousChatsHandler();
+  }, []);
   return (
     <List sx={{ width: "100%", maxWidth: 300, bgcolor: "background.paper" }}>
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Brunch this weekend?"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Ali Connors
-              </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
+      {threePreviousChats.map((msg, key) => {
+        return (
+          <ListItem alignItems="flex-start" key={key}>
+            <ListItemAvatar>
+              <Avatar
+                alt="Remy Sharp"
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                  CurrentUserFullData.avatarSrc
+                )}`}
+              />
+            </ListItemAvatar>
+            <ListItemText
+              primary={`${new Date(
+                msg.timestamp
+              ).toLocaleDateString()} ${new Date(
+                msg.timestamp
+              ).toLocaleTimeString()}`}
+              secondary={
+                <React.Fragment>
+                  <Typography
+                    sx={{ display: "inline" ,marginRight:"5px"}}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    {CurrentUserFullData.userName +":"}
+                  </Typography>
+                  {msg.message}
+                </React.Fragment>
+              }
+            />
+          </ListItem>
+        );
+      })}
+
       <Divider variant="inset" component="li" />
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Summer BBQ"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                to Scott, Alex, Jennifer
-              </Typography>
-              {" — Wish I could come, but I'm out of town this…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Oui Oui"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Sandra Adams
-              </Typography>
-              {" — Do you have Paris recommendations? Have you ever…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
     </List>
   );
 }

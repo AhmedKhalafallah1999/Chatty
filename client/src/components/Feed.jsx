@@ -9,6 +9,7 @@ import LanguageDetector from "./LanguageDetector";
 import welcome from "../assets/images/wlcome.gif";
 
 const Feed = () => {
+
   const {
     socket,
     sideBarOpen,
@@ -55,7 +56,7 @@ const Feed = () => {
   }, [socket]);
   useEffect(() => {
     const handleReceivePrivateMessage = (payload) => {
-      notifyIsTypingHandler(payload.msg);
+      notifyIsTypingHandler(payload.msg, payload.sender);
     };
 
     socket.on("notify-is-typing", handleReceivePrivateMessage);
@@ -98,7 +99,9 @@ const Feed = () => {
                   />
                   <div>
                     <h2>{ContactWith.userName}</h2>
-                    <p className="notify-typing">{notifyIsTyping}</p>
+                    {notifyIsTyping[1] === ContactWith._id && (
+                      <p className="notify-typing">{notifyIsTyping[0]}</p>
+                    )}
                   </div>
                 </div>
                 <div className="setting">

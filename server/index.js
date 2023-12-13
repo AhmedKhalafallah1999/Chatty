@@ -13,6 +13,7 @@ import { NotFoundError } from "./errors/customError.js";
 // importing socket.io for real communications
 import { Server } from "socket.io";
 import message from "./models/message.js";
+import user from "./models/user.js";
 const app = express();
 const httpServer = createServer(app);
 
@@ -43,9 +44,12 @@ io.on("connection", (socket) => {
   console.log(`User Connected ${socket.id}`);
 
   // storing the user ids with their socket ids into map
-  socket.on("associated-current-user", (payload) => {
+  socket.on("associated-current-user", async (payload) => {
     userSocketMap.set(payload.currentUserId, socket.id);
-    console.log(userSocketMap);
+    const User = await user.findOne({ _id: payload.currentUserId });
+    User.socketId = true;
+    await User.save();
+    // console.log(userSocketMap);
   });
 
   // to handling user is typing notify
@@ -54,6 +58,7 @@ io.on("connection", (socket) => {
     if (myFriendSocketId) {
       io.to(myFriendSocketId).emit("notify-is-typing", {
         msg: payload.msg,
+        sender: payload.sender,
       });
     }
   });
@@ -89,6 +94,11 @@ io.on("connection", (socket) => {
         // senderSocketId: socket.id,
         msg: Message,
       });
+      io.to(myFriendSocketId).emit("notify-msg", {
+        // senderSocketId: socket.id,
+        myUserId: myUserId,
+        myFriendUserId: payload.chatWithUserId,
+      });
     } else {
       console.log(`this user with ${socket.id} is offline`);
       io.to(socket.id).emit("recievePrivateMessage", {
@@ -101,10 +111,13 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     // Find and delete the user entry from the map
     for (const [userId, socketId] of userSocketMap.entries()) {
       if (socketId === socket.id) {
+        const User = await user.findOne({ _id: userId });
+        User.socketId = false;
+        await User.save();
         userSocketMap.delete(userId);
         break;
       }

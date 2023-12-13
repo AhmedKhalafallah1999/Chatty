@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordToken: String,
     avatarIsSet: Boolean,
     avatarSrc: String,
+    socketId: Boolean,
   },
   { timestamps: true }
 );

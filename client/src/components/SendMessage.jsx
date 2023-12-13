@@ -8,7 +8,7 @@ const SendMessage = () => {
     useChattyContext();
   useEffect(() => {
     const notifyOfflineHandler = (payload) => {
-      console.log("fffffffffffff");
+      // console.log("fffffffffffff");
       toast.error(`${ContactWith.userName} ${payload.msg}`);
     };
 
@@ -37,6 +37,7 @@ const SendMessage = () => {
               socket.emit("someone-is-typing", {
                 msg: `${CurrentUserFullData.userName} is typing ...`,
                 contactWith: ContactWith,
+                sender: CurrentUserFullData._id,
               });
             }
           }}

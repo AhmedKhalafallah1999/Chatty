@@ -1,15 +1,39 @@
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
+import { useEffect, useState } from "react";
 
 export default function OnlineUsers() {
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch("/api/v1/feed/all-users");
+      const result = await response.json();
+      if (response.ok) {
+        // console.log(result);
+        setUsers(result);
+      }
+    };
+    fetchUsers();
+  }, []);
+
   return (
     <Box display={"flex"} marginLeft={2} mt={2} mb={2}>
       <AvatarGroup total={24}>
-        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-        <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-        <Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
-        <Avatar alt="Trevor Henderson" src="/static/images/avatar/5.jpg" />
+        {users.map((user, key) => {
+          return (
+            <div key={key}>
+              {user.socketId && (
+                <Tooltip title={user.userName} arrow>
+                <Avatar
+                  alt={user.userName}
+                  src={`data:image/svg+xml;utf8,${encodeURIComponent(user.avatarSrc)}`}
+                />
+              </Tooltip>
+              )}
+            </div>
+          );
+        })}
       </AvatarGroup>
     </Box>
   );
