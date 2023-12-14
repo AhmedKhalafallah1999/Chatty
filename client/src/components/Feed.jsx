@@ -2,14 +2,13 @@ import { Box } from "@mui/material";
 import { useChattyContext } from "../pages/Home";
 import styled from "styled-components";
 import SendMessage from "./SendMessage";
-import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import MyFriendsUserMenu from "./MyFriendsUserMenu";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import LanguageDetector from "./LanguageDetector";
 import welcome from "../assets/images/wlcome.gif";
 
 const Feed = () => {
-
   const {
     socket,
     sideBarOpen,
@@ -17,6 +16,7 @@ const Feed = () => {
     CurrentUser,
     notifyIsTypingHandler,
     notifyIsTyping,
+    // StoresUsers,
   } = useChattyContext();
   // console.log(ModalState);
   // console.log(CurrentUser, ContactWith);
@@ -34,6 +34,9 @@ const Feed = () => {
         notifyIsTypingHandler("");
         if (response.ok) {
           setPrevMessages(result.messages);
+          // console.log(CurrentUser)
+
+          // console.log(result)
         } else {
           toast.error(result);
         }
@@ -105,7 +108,19 @@ const Feed = () => {
                   </div>
                 </div>
                 <div className="setting">
-                  <PowerSettingsNewIcon />
+                  {ContactWith.archivedBy.includes(CurrentUser) ? (
+                    <MyFriendsUserMenu
+                      user={ContactWith}
+                      CurrentUserFullData={CurrentUser}
+                      removedFrom={true}
+                    />
+                  ) : (
+                    <MyFriendsUserMenu
+                      user={ContactWith}
+                      CurrentUserFullData={CurrentUser}
+                      // removedFrom={true}
+                    />
+                  )}
                 </div>
               </header>
             </>
