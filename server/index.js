@@ -18,7 +18,7 @@ const app = express();
 const httpServer = createServer(app);
 
 dotenv.config();
-app.use(cors());
+// app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());

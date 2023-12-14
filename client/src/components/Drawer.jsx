@@ -1,5 +1,4 @@
 import {
-  Button,
   Divider,
   Drawer,
   IconButton,
@@ -11,9 +10,6 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import styled from "@emotion/styled";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
@@ -25,6 +21,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import sound from "../assets/images/notify.mp3";
+import MyFriendsUserMenu from "./MyFriendsUserMenu";
+import CustomizedListArchieved from "./Archived";
 
 const DrawerHeader = styled(Toolbar)(() => ({
   justifyContent: "flex-end",
@@ -40,7 +38,6 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
     const storedUnreadMessages = localStorage.getItem("unreadMessages");
     return storedUnreadMessages ? JSON.parse(storedUnreadMessages) : {};
   });
-  // const [myFriendId, setMyFriendId] = useState();
   const {
     sideBarOpen,
     ModalState,
@@ -50,15 +47,15 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
     currentUserDataHandler,
     notifyIsTyping,
     ContactWith = { _id: 0 },
+    CurrentUserFullData,
+    
   } = useChattyContext();
-  // console.log(ContactWith);
   const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
   useEffect(() => {
     const fetchCurrentUser = async () => {
       const response = await fetch("/api/v1/feed/current-user");
       const result = await response.json();
       if (response.ok) {
-        // console.log(result.currentUser);
         currentUserDataHandler(result.currentUserId.userId, result.currentUser);
         socket.emit("associated-current-user", {
           currentUserId: result.currentUserId.userId,
@@ -93,14 +90,11 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
   };
   useEffect(() => {
     const handleReceiveNotifyMessage = (payload) => {
-      // notifyIsTypingHandler(payload.msg);
-      // setMyFriendId(payload.myUserId);
       setMsgNumber((prev) => ({
         ...prev,
         [payload.myUserId]: (prev[payload.myUserId] || 0) + 1,
       }));
       notificationSound.play();
-      // console.log(payload);
     };
 
     socket.on("notify-msg", handleReceiveNotifyMessage);
@@ -112,17 +106,6 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
   useEffect(() => {
     localStorage.setItem("unreadMessages", JSON.stringify(msgNumber));
   }, [msgNumber]);
-  // const playNotificationSound = () => {
-  // };
-  // useEffect(() => {
-  //   // Listen for the click event on the document body
-  //   document.body.addEventListener("click", playNotificationSound);
-
-  //   // Cleanup the event listener when the component unmounts
-  //   return () => {
-  //     document.body.removeEventListener("click", playNotificationSound);
-  //   };
-  // }, []);
   return (
     <Drawer
       sx={{
@@ -163,95 +146,89 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
           ))}
       </DrawerHeader>
       <Divider />
-      <List>
-        {["Archive", "Starred", "Chat", "Drafts"].map((task, index) => {
-          return (
-            <ListItem key={index}>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={task} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
+      <CustomizedListArchieved users={users} />
       <Divider />
       <List>
         {users.map((user, index) => {
           // console.log(user);
-          return (
-            <ListItem key={index}>
-              <ListItemButton onClick={() => openChatTogetherHandler(user)}>
-                <UserContainer>
-                  <ListItemIcon>
-                    {" "}
-                    <img
-                      src={`data:image/svg+xml;utf8,${encodeURIComponent(
-                        user.avatarSrc
-                      )}`}
-                      alt={`Avatar ${index}`}
-                      width={30}
-                      height={30}
-                    />
-                    {/* <AccountCircleIcon /> */}
-                    <div
-                      className={
-                        user.socketId
-                          ? "status-circle connected"
-                          : "status-circle disconnected"
-                      }
-                    ></div>
-                  </ListItemIcon>
-                </UserContainer>
-                <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "7px",
-                    }}
-                  >
-                    <ListItemText primary={user.userName} />
-                    {msgNumber[user._id] && ContactWith._id !== user._id && (
-                      // <ListItemText secondary={notifyIsTyping} />
-                      <Typography
-                        variant="body2"
-                        style={{
-                          fontSize: "10px",
-                          backgroundColor: "#DE2F2F",
-                          borderRadius: "50%",
-                          width: "20px",
-                          height: "20px",
-                          textAlign: "center",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
+          const isArchieve = user.archivedBy.includes(CurrentUserFullData._id);
 
-                          // padding: "8px",
-                        }}
-                      >
-                        {msgNumber[user._id]}
+          if (!isArchieve) {
+            return (
+              <ListItem key={index}>
+                <ListItemButton onClick={() => openChatTogetherHandler(user)}>
+                  <UserContainer>
+                    <ListItemIcon>
+                      {" "}
+                      <img
+                        src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                          user.avatarSrc
+                        )}`}
+                        alt={`Avatar ${index}`}
+                        width={30}
+                        height={30}
+                      />
+                      {/* <AccountCircleIcon /> */}
+                      <div
+                        className={
+                          user.socketId
+                            ? "status-circle connected"
+                            : "status-circle disconnected"
+                        }
+                      ></div>
+                    </ListItemIcon>
+                  </UserContainer>
+                  <div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "7px",
+                      }}
+                    >
+                      <ListItemText primary={user.userName} />
+                      {msgNumber[user._id] && ContactWith._id !== user._id && (
+                        // <ListItemText secondary={notifyIsTyping} />
+                        <Typography
+                          variant="body2"
+                          style={{
+                            fontSize: "10px",
+                            backgroundColor: "#DE2F2F",
+                            borderRadius: "50%",
+                            width: "20px",
+                            height: "20px",
+                            textAlign: "center",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+
+                            // padding: "8px",
+                          }}
+                        >
+                          {msgNumber[user._id]}
+                        </Typography>
+                      )}
+                    </div>
+                    {notifyIsTyping[1] === user._id && (
+                      // <ListItemText secondary={notifyIsTyping} />
+                      <Typography variant="body2" style={{ fontSize: "9px" }}>
+                        {notifyIsTyping[0]}
                       </Typography>
                     )}
                   </div>
-                  {notifyIsTyping[1] === user._id && (
-                    // <ListItemText secondary={notifyIsTyping} />
-                    <Typography variant="body2" style={{ fontSize: "9px" }}>
-                      {notifyIsTyping[0]}
-                    </Typography>
-                  )}
-                </div>
-              </ListItemButton>
-            </ListItem>
-          );
+                </ListItemButton>
+                <MyFriendsUserMenu
+                  user={user}
+                  CurrentUserFullData={CurrentUserFullData}
+                />
+              </ListItem>
+            );
+          } else {
+            return null;
+          }
         })}
       </List>
-      {/* <Button onClick={playNotificationSound} style={{ display: "none" }}>
-        Play Notification Sound
-      </Button> */}
     </Drawer>
   );
 };

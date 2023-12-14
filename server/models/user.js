@@ -10,6 +10,12 @@ const userSchema = new mongoose.Schema(
     avatarIsSet: Boolean,
     avatarSrc: String,
     socketId: Boolean,
+    archivedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
