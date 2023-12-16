@@ -8,6 +8,7 @@ import { action as RegisteredAction } from "./pages/Register";
 import { action as LoggedInAction } from "./pages/Login";
 import { action as ResetAction } from "./pages/ResetPassword";
 import { action as NewPasswordAction } from "./pages/NewPassword";
+import { action as CreateGroupAction } from "./components/Rooms";
 // importing socket.io
 import io from "socket.io-client";
 const socket = io.connect("http://localhost:8080/");
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
   {
     path: "/home",
     element: <Home socket={socket} />,
+    action: CreateGroupAction,
   },
   {
     path: "/register",

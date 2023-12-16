@@ -23,7 +23,7 @@ import { toast } from "react-toastify";
 import sound from "../assets/images/notify.mp3";
 import MyFriendsUserMenu from "./MyFriendsUserMenu";
 import CustomizedListArchieved from "./Archived";
-
+import Rooms from "./Rooms";
 const DrawerHeader = styled(Toolbar)(() => ({
   justifyContent: "flex-end",
 }));
@@ -48,7 +48,6 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
     notifyIsTyping,
     ContactWith = { _id: 0 },
     CurrentUserFullData,
-    
   } = useChattyContext();
   const { lightThemeHandler, mode, darkThemeHandler } = useAppContext();
   useEffect(() => {
@@ -118,7 +117,7 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
               top: "65px",
               boxSizing: "border-box",
             }
-          : { width: "250px", top: "65px", boxSizing: "border-box" },
+          : { width: "260px", top: "65px", boxSizing: "border-box" },
       }}
       open={isBig ? sideBarOpen : ModalState}
       variant="persistent"
@@ -147,6 +146,8 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
       </DrawerHeader>
       <Divider />
       <CustomizedListArchieved users={users} />
+      <Rooms />
+      {/* < /> */}
       <Divider />
       <List>
         {users.map((user, index) => {
@@ -187,7 +188,10 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
                         gap: "7px",
                       }}
                     >
-                      <ListItemText primary={user.userName} />
+                      <ListItemText
+                        primary={user.userName}
+                        sx={{ width: "110px" }}
+                      />
                       {msgNumber[user._id] && ContactWith._id !== user._id && (
                         // <ListItemText secondary={notifyIsTyping} />
                         <Typography
@@ -202,7 +206,9 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-
+                            right: "0",
+                            position: "absolute",
+                            marginRight: "-30px",
                             // padding: "8px",
                           }}
                         >
@@ -234,13 +240,13 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
 };
 export default DrawerSlider;
 const UserContainer = styled.div`
-  width: 70px;
+  width: 100px;
   height: 50px;
   position: relative;
 
   img {
-    height: 70%;
-    width: 70%;
+    height: 45px;
+    width: 45px;
     border-radius: 50%;
   }
 

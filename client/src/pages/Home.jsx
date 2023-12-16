@@ -5,14 +5,15 @@ import RightBar from "../components/RightBar";
 import SideBar from "../components/SideBar";
 import { createContext, useContext, useState } from "react";
 import GlobalStyles from "../components/Global";
+import RoomFeed from "../components/RoomFeed";
 const ChattyContext = createContext();
-
 const Home = ({ socket }) => {
   const [sideBarOpen, setSideBarState] = useState(true);
   const [rightBarOpen, setRightBarState] = useState(true);
   const [ModalState, setModalState] = useState(false);
   const [ModalRightState, setModalRightState] = useState(false);
   const [ContactWith, setContactWith] = useState();
+  const [RoomWith, setRoomWith] = useState();
   const [CurrentUser, setCurrentUser] = useState();
   const [CurrentUserFullData, setCurrentUserFullData] = useState([]);
   const [notifyIsTyping, setNotifyIsTyping] = useState([]);
@@ -45,6 +46,11 @@ const Home = ({ socket }) => {
   };
   const OpenChatContainerHandler = (contactWithUser) => {
     setContactWith(contactWithUser);
+    setRoomWith();
+  };
+  const OpenRoomContainerHandler = (room) => {
+    setRoomWith(room);
+    setContactWith();
   };
   const currentUserDataHandler = (currentUserId, currentUserFullData) => {
     setCurrentUser(currentUserId);
@@ -71,6 +77,8 @@ const Home = ({ socket }) => {
         socket,
         OpenChatContainerHandler,
         ContactWith,
+        OpenRoomContainerHandler,
+        RoomWith,
         currentUserDataHandler,
         CurrentUser,
         CurrentUserFullData,
@@ -83,7 +91,7 @@ const Home = ({ socket }) => {
         <NavBar />
         <Stack direction={"row"} spacing={2} justifyContent={"space-between"}>
           <SideBar />
-          <Feed />
+          {ContactWith ? <Feed /> : <RoomFeed />}
           <RightBar />
         </Stack>
       </Box>

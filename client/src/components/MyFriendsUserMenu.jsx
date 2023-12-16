@@ -65,9 +65,9 @@ export default function PositionedMenu(props) {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        // sx={{width:"5px", height:"20px"}}
+        // sx={{ width: "2px", height: "20px" }}
       >
-        <span className="material-symbols-outlined">more_vert</span>
+        <span className="material-symbols-outlined" style={{width:"0px"}}>more_vert</span>
       </Button>
       <Menu
         id="demo-positioned-menu"

@@ -14,11 +14,12 @@ import { NotFoundError } from "./errors/customError.js";
 import { Server } from "socket.io";
 import message from "./models/message.js";
 import user from "./models/user.js";
+import room from "./routes/room.js";
 const app = express();
 const httpServer = createServer(app);
 
 dotenv.config();
-// app.use(cors());
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());
@@ -26,6 +27,8 @@ app.use(cookieParser());
 app.use("/api/v1/auth", auth);
 // users routes
 app.use("/api/v1/feed", feed);
+// room routes
+app.use("/api/v1/room", room);
 // test Router
 app.use("/api/v1", test);
 

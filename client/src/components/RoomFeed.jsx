@@ -17,116 +17,98 @@ const Feed = () => {
     notifyIsTypingHandler,
     notifyIsTyping,
     RoomWith,
-    // StoresUsers,
   } = useChattyContext();
-  // console.log(ModalState);
-  // console.log(CurrentUser, ContactWith);
   const [messages, setMsg] = useState([]);
-  // const [notifyIsTyping, setNotifyIsTyping] = useState();
   const [prevMessages, setPrevMessages] = useState([]);
   const [showFullMessage, setShowFullMessage] = useState([]);
-  useEffect(() => {
-    const handleRecievePreviousMessage = async () => {
-      if (ContactWith && CurrentUser) {
-        const response = await fetch(
-          `/api/v1/feed/previousMsg/${ContactWith._id}`
-        );
-        const result = await response.json();
-        notifyIsTypingHandler("");
-        if (response.ok) {
-          setPrevMessages(result.messages);
-          // console.log(CurrentUser)
+  // useEffect(() => {
+  //   const handleRecievePreviousMessage = async () => {
+  //     if (ContactWith && CurrentUser) {
+  //       const response = await fetch(
+  //         `/api/v1/feed/previousMsg/${ContactWith._id}`
+  //       );
+  //       const result = await response.json();
+  //       notifyIsTypingHandler("");
+  //       if (response.ok) {
+  //         setPrevMessages(result.messages);
+  //         // console.log(CurrentUser)
 
-          // console.log(result)
-        } else {
-          toast.error(result);
-        }
-      }
-    };
-    handleRecievePreviousMessage();
-  }, [ContactWith, CurrentUser]);
+  //         // console.log(result)
+  //       } else {
+  //         toast.error(result);
+  //       }
+  //     }
+  //   };
+  //   handleRecievePreviousMessage();
+  // }, [ContactWith, CurrentUser]);
 
-  useEffect(() => {
-    const handleReceivePrivateMessage = (payload) => {
-      setMsg((prevMessages) => [...prevMessages, payload.msg]);
-      notifyIsTypingHandler("");
-    };
+  // useEffect(() => {
+  //   const handleReceivePrivateMessage = (payload) => {
+  //     setMsg((prevMessages) => [...prevMessages, payload.msg]);
+  //     notifyIsTypingHandler("");
+  //   };
 
-    socket.on("recievePrivateMessage", handleReceivePrivateMessage);
+  //   socket.on("recievePrivateMessage", handleReceivePrivateMessage);
 
-    return () => {
-      socket.off("recievePrivateMessage", handleReceivePrivateMessage);
-    };
-  }, [socket]);
-  useEffect(() => {
-    const handleReceivePrivateMessage = (payload) => {
-      notifyIsTypingHandler(payload.msg, payload.sender);
-    };
+  //   return () => {
+  //     socket.off("recievePrivateMessage", handleReceivePrivateMessage);
+  //   };
+  // }, [socket]);
+  // useEffect(() => {
+  //   const handleReceivePrivateMessage = (payload) => {
+  //     notifyIsTypingHandler(payload.msg, payload.sender);
+  //   };
 
-    socket.on("notify-is-typing", handleReceivePrivateMessage);
+  //   socket.on("notify-is-typing", handleReceivePrivateMessage);
 
-    return () => {
-      socket.off("notify-is-typing", handleReceivePrivateMessage);
-    };
-  }, [socket, ContactWith]);
-  useEffect(() => {
-    const handleReceivePrivateMessage = () => {
-      setMsg([]);
-    };
-    handleReceivePrivateMessage();
-  }, [ContactWith]);
-  const handleReadMore = (index) => {
-    const updatedShowFullMessage = [...showFullMessage];
-    updatedShowFullMessage[index] = true;
-    setShowFullMessage(updatedShowFullMessage);
-  };
+  //   return () => {
+  //     socket.off("notify-is-typing", handleReceivePrivateMessage);
+  //   };
+  // }, [socket, ContactWith]);
+  // useEffect(() => {
+  //   const handleReceivePrivateMessage = () => {
+  //     setMsg([]);
+  //   };
+  //   handleReceivePrivateMessage();
+  // }, [ContactWith]);
+  // const handleReadMore = (index) => {
+  //   const updatedShowFullMessage = [...showFullMessage];
+  //   updatedShowFullMessage[index] = true;
+  //   setShowFullMessage(updatedShowFullMessage);
+  // };
 
   return (
     <Box flex={sideBarOpen ? "3" : "40"} p={2} height="100vh">
-      {!ContactWith ? (
+      {!RoomWith ? (
         <WelcomingContainer>
           <img src={welcome} alt="loader" />
         </WelcomingContainer>
       ) : (
         <FeedContainer>
-          {ContactWith && (
+          {RoomWith && (
             <>
               <header className={sideBarOpen ? "header" : "header full-width"}>
                 <div className="user">
                   <img
-                    src={`data:image/svg+xml;utf8,${encodeURIComponent(
-                      ContactWith.avatarSrc
-                    )}`}
-                    alt={`Avatar ${ContactWith.userName}`}
+                    src="https://cdn.sanity.io/images/kts928pd/production/d4f96a14f70da85a81bbfa8eeb05c054439dfef5-731x731.png"
+                    alt={`Avatar ${RoomWith.name}`}
                     width={80}
                     height={80}
                   />
                   <div>
-                    <h2>{ContactWith.userName}</h2>
-                    {notifyIsTyping[1] === ContactWith._id && (
+                    <h2>{RoomWith.name}</h2>
+                    {/* {notifyIsTyping[1] === ContactWith._id && (
                       <p className="notify-typing">{notifyIsTyping[0]}</p>
-                    )}
+                    )} */}
                   </div>
                 </div>
                 <div className="setting">
-                  {ContactWith.archivedBy.includes(CurrentUser) ? (
-                    <MyFriendsUserMenu
-                      user={ContactWith}
-                      CurrentUserFullData={CurrentUser}
-                      removedFrom={true}
-                    />
-                  ) : (
-                    <MyFriendsUserMenu
-                      user={ContactWith}
-                      CurrentUserFullData={CurrentUser}
-                      // removedFrom={true}
-                    />
-                  )}
+                  <MyFriendsUserMenu />
                 </div>
               </header>
             </>
           )}
-          <ul className="prevMsg">
+          {/* <ul className="prevMsg">
             {prevMessages.map((content, index) => (
               <li
                 key={index}
@@ -243,7 +225,7 @@ const Feed = () => {
                 )}
               </li>
             ))}
-          </ul>
+          </ul> */}
           <SendMessage />
         </FeedContainer>
       )}
