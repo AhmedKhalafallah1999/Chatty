@@ -9,6 +9,8 @@ import { action as LoggedInAction } from "./pages/Login";
 import { action as ResetAction } from "./pages/ResetPassword";
 import { action as NewPasswordAction } from "./pages/NewPassword";
 import { action as CreateGroupAction } from "./components/Rooms";
+import { loader as joinRoomLoader } from "./components/joinRoom";
+import JoinRoom from "./components/joinRoom";
 // importing socket.io
 import io from "socket.io-client";
 const socket = io.connect("http://localhost:8080/");
@@ -48,6 +50,11 @@ const router = createBrowserRouter([
     path: "/reset-password/:token",
     element: <LandingPage resetNewPassword />,
     action: NewPasswordAction,
+  },
+  {
+    path: "/join/:roomId",
+    element: <JoinRoom />,
+    loader: joinRoomLoader,
   },
 ]);
 function App() {

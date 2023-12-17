@@ -56,6 +56,18 @@ export default function PositionedMenu(props) {
       return toast.error(result.msg);
     }
   };
+  // for rooms
+  const inviteFriendHandlerWithHandleClose = async (room) => {
+    const inviteLink = `http://localhost:5173/join/${room._id}`;
+    navigator.clipboard
+      .writeText(inviteLink)
+      .then(() => {
+        toast.success("Link copied to cliboard");
+      })
+      .catch((err) => {
+        toast.error(`Unable to copy to clipboard ${err}`);
+      });
+  };
 
   return (
     <div>
@@ -67,7 +79,9 @@ export default function PositionedMenu(props) {
         onClick={handleClick}
         // sx={{ width: "2px", height: "20px" }}
       >
-        <span className="material-symbols-outlined" style={{width:"0px"}}>more_vert</span>
+        <span className="material-symbols-outlined" style={{ width: "0px" }}>
+          more_vert
+        </span>
       </Button>
       <Menu
         id="demo-positioned-menu"
@@ -84,26 +98,44 @@ export default function PositionedMenu(props) {
           horizontal: "left",
         }}
       >
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
-        {!props.removedFrom ? (
-          <MenuItem
-            onClick={() =>
-              handleArchivedHandler(props.user, props.CurrentUserFullData)
-            }
-          >
-            Archived
-          </MenuItem>
+        {props.room ? (
+          <>
+            <MenuItem onClick={handleClose}>leave the room</MenuItem>
+            <MenuItem onClick={handleClose}>Delete the room</MenuItem>
+            <MenuItem onClick={handleClose}>Notify</MenuItem>
+            <MenuItem
+              onClick={() => inviteFriendHandlerWithHandleClose(props.room)}
+            >
+              invite friends
+            </MenuItem>
+          </>
         ) : (
-          <MenuItem
-            onClick={() =>
-              handleUndoArchivedHandler(props.user, props.CurrentUserFullData)
-            }
-          >
-            Undo from Archived
-          </MenuItem>
-        )}
+          <>
+            <MenuItem onClick={handleClose}>Delete</MenuItem>
+            {!props.removedFrom ? (
+              <MenuItem
+                onClick={() =>
+                  handleArchivedHandler(props.user, props.CurrentUserFullData)
+                }
+              >
+                Archived
+              </MenuItem>
+            ) : (
+              <MenuItem
+                onClick={() =>
+                  handleUndoArchivedHandler(
+                    props.user,
+                    props.CurrentUserFullData
+                  )
+                }
+              >
+                Undo from Archived
+              </MenuItem>
+            )}
 
-        <MenuItem onClick={handleClose}>Notify</MenuItem>
+            <MenuItem onClick={handleClose}>Notify</MenuItem>
+          </>
+        )}
       </Menu>
     </div>
   );

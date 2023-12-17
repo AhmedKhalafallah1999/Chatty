@@ -187,7 +187,7 @@ export default function CustomizedListArchieved(props) {
               {open &&
                 data.map((room, index) => {
                   return (
-                    <ListItem key={index} sx={{ p: "0" }}>
+                    <ListItem key={index} sx={{ p: "2" }}>
                       <ListItemButton
                         onClick={() => openChatTogetherHandler(room)}
                         sx={{
@@ -198,8 +198,11 @@ export default function CustomizedListArchieved(props) {
                           <PageviewIcon />
                         </Avatar>
                         <ListItemText primary={room.name} />
-                        <MyFriendsUserMenu />
                       </ListItemButton>
+                      <MyFriendsUserMenu
+                        room={room}
+                        currentUser={CurrentUser}
+                      />
                     </ListItem>
                   );
                 })}
