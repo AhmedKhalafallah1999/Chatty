@@ -103,7 +103,10 @@ const Feed = () => {
                   </div>
                 </div>
                 <div className="setting">
-                  <MyFriendsUserMenu />
+                  <MyFriendsUserMenu
+                    room={RoomWith}
+                    currentUser={CurrentUser}
+                  />
                 </div>
               </header>
             </>
