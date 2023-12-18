@@ -3,8 +3,8 @@ import SendIcon from "@mui/icons-material/Send";
 import { useChattyContext } from "../pages/Home";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-const SendMessage = () => {
-  const { socket, ContactWith, sideBarOpen, CurrentUserFullData } =
+const SendMessage = (props) => {
+  const { socket, ContactWith, sideBarOpen, CurrentUserFullData, RoomWith } =
     useChattyContext();
   useEffect(() => {
     const notifyOfflineHandler = (payload) => {
@@ -22,6 +22,12 @@ const SendMessage = () => {
   const sendMsgHandler = (value) => {
     if (ContactWith) {
       socket.emit("chatWith", { chatWithUserId: ContactWith._id, msg: value });
+    } else if (RoomWith) {
+      socket.emit("roomWith", {
+        chatWithRoomId: RoomWith._id,
+        currentUserId: CurrentUserFullData._id,
+        msg: value,
+      });
     }
   };
   return (

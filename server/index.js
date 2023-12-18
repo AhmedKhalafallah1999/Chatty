@@ -15,11 +15,20 @@ import { Server } from "socket.io";
 import message from "./models/message.js";
 import user from "./models/user.js";
 import room from "./routes/room.js";
+import roomMsg from "./models/roomMsg.js";
+// public
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
+
 const app = express();
 const httpServer = createServer(app);
 
 dotenv.config();
 app.use(cors());
+// public
+const _dirname = dirname(fileURLToPath(import.meta.url));
+app.use(express.static(path.resolve(_dirname, "./public")));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -114,6 +123,30 @@ io.on("connection", (socket) => {
     }
   });
 
+  // for room
+
+  socket.on("notify-someone-join", (payload) => {
+    socket.join(payload.roomId);
+    io.to(payload.roomId).emit("notify-someone-join-msg", {
+      msg: payload.msg,
+    });
+  });
+  socket.on("roomWith", async (payload) => {
+    const RoomMessage = await roomMsg.create({
+      sender: payload.currentUserId,
+      reciver: payload.chatWithRoomId,
+      message: payload.msg,
+    });
+    io.to(payload.chatWithRoomId).emit("recieveRoomPrivateMessage", {
+      msg: RoomMessage,
+    });
+  });
+  socket.on("notify-someone-leave", (payload) => {
+    io.to(payload.roomId).emit("notify-someone-leave-msg", {
+      msg: payload.msg,
+    });
+  });
+
   socket.on("disconnect", async () => {
     // Find and delete the user entry from the map
     for (const [userId, socketId] of userSocketMap.entries()) {
@@ -135,7 +168,7 @@ app.use("*", (req, res) => {
 
 // error middleware
 app.use("*", (err, req, res, next) => {
-  res.status(err.StatusCodes).json({ msg: err.message });
+  res.status(err.StatusCodes || 500).json({ msg: err.message });
   // console.log(err);
 });
 

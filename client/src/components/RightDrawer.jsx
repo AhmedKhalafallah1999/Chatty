@@ -39,8 +39,15 @@ const RightDrawer = ({ isSmall, theme, isBig }) => {
               position: "fixed",
               top: "65px",
               boxSizing: "border-box",
+              overflowX: "hidden",
+              whiteSpace: "nowrap",
             }
-          : { width: "350px", top: "65px", boxSizing: "border-box" },
+          : {
+              width: "350px",
+              top: "65px",
+              boxSizing: "border-box",
+              overflowX: "hidden",
+            },
       }}
       open={isBig ? rightBarOpen : ModalRightState}
       variant="persistent"

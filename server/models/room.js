@@ -10,6 +10,12 @@ const RoomSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
       },
     ],
+    admin: [
+      {
+        ref: "User",
+        type: mongoose.Schema.Types.ObjectId,
+      },
+    ],
   },
   { tiestamps: true }
 );
