@@ -3,7 +3,9 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { toast } from "react-toastify";
+import { useChattyContext } from "../pages/Home";
 export default function PositionedMenu(props) {
+  const { socket, CurrentUserFullData } = useChattyContext();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -68,6 +70,32 @@ export default function PositionedMenu(props) {
         toast.error(`Unable to copy to clipboard ${err}`);
       });
   };
+  const leaveTheRoomHandler = async (room) => {
+    const response = await fetch(`api/v1/room/leave/${room._id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await response.json();
+    if (response.ok) {
+      toast.success(result.msg);
+      setAnchorEl(null);
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+
+      socket.emit("notify-someone-leave", {
+        msg: `${CurrentUserFullData.userName} left this group`,
+        roomId: room._id,
+      });
+    }
+    // return null;
+    else {
+      toast.error(result.msg);
+    }
+  };
 
   return (
     <div>
@@ -77,7 +105,6 @@ export default function PositionedMenu(props) {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        // sx={{ width: "2px", height: "20px" }}
       >
         <span className="material-symbols-outlined" style={{ width: "0px" }}>
           more_vert
@@ -98,44 +125,57 @@ export default function PositionedMenu(props) {
           horizontal: "left",
         }}
       >
-        {props.room ? (
-          <>
-            <MenuItem onClick={handleClose}>leave the room</MenuItem>
-            <MenuItem onClick={handleClose}>Delete the room</MenuItem>
-            <MenuItem onClick={handleClose}>Notify</MenuItem>
-            <MenuItem
-              onClick={() => inviteFriendHandlerWithHandleClose(props.room)}
-            >
-              invite friends
-            </MenuItem>
-          </>
-        ) : (
-          <>
-            <MenuItem onClick={handleClose}>Delete</MenuItem>
-            {!props.removedFrom ? (
+        {props.room
+          ? [
               <MenuItem
-                onClick={() =>
-                  handleArchivedHandler(props.user, props.CurrentUserFullData)
-                }
+                key="leave"
+                onClick={() => leaveTheRoomHandler(props.room)}
               >
-                Archived
-              </MenuItem>
-            ) : (
+                Leave the room
+              </MenuItem>,
+              <MenuItem key="delete" onClick={handleClose}>
+                Delete the room
+              </MenuItem>,
+              <MenuItem key="notify" onClick={handleClose}>
+                Notify
+              </MenuItem>,
               <MenuItem
-                onClick={() =>
-                  handleUndoArchivedHandler(
-                    props.user,
-                    props.CurrentUserFullData
-                  )
-                }
+                key="invite"
+                onClick={() => inviteFriendHandlerWithHandleClose(props.room)}
               >
-                Undo from Archived
-              </MenuItem>
-            )}
-
-            <MenuItem onClick={handleClose}>Notify</MenuItem>
-          </>
-        )}
+                Invite friends
+              </MenuItem>,
+            ]
+          : [
+              <MenuItem key="delete" onClick={handleClose}>
+                Delete
+              </MenuItem>,
+              !props.removedFrom ? (
+                <MenuItem
+                  key="archived"
+                  onClick={() =>
+                    handleArchivedHandler(props.user, props.CurrentUserFullData)
+                  }
+                >
+                  Archived
+                </MenuItem>
+              ) : (
+                <MenuItem
+                  key="undoArchived"
+                  onClick={() =>
+                    handleUndoArchivedHandler(
+                      props.user,
+                      props.CurrentUserFullData
+                    )
+                  }
+                >
+                  Undo from Archived
+                </MenuItem>
+              ),
+              <MenuItem key="notify" onClick={handleClose}>
+                Notify
+              </MenuItem>,
+            ]}
       </Menu>
     </div>
   );

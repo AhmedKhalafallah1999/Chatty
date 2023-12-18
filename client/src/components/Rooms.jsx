@@ -23,7 +23,20 @@ import { useChattyContext } from "../pages/Home";
 import PageviewIcon from "@mui/icons-material/Pageview";
 import { pink } from "@mui/material/colors";
 import MyFriendsUserMenu from "./MyFriendsUserMenu";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useRef } from "react";
 
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 const FireNav = MUIStyled(List)({
   "& .MuiListItemButton-root": {
     // paddingLeft: 24,
@@ -70,13 +83,22 @@ export const action = async ({ request }) => {
   return null;
 };
 export default function CustomizedListArchieved(props) {
+  const { socket } = useChattyContext();
   const [open, setOpen] = React.useState(true);
   const [data, setData] = React.useState([]);
+  const [isHovered, setIsHovered] = React.useState([]);
+  const fileInputRef = useRef();
 
   const [openModalCreateGroup, setOpenModalCreateGroup] = React.useState(false);
-  const { CurrentUser, OpenRoomContainerHandler } = useChattyContext();
+  const { CurrentUser, OpenRoomContainerHandler, CurrentUserFullData } =
+    useChattyContext();
   const openChatTogetherHandler = (room) => {
     OpenRoomContainerHandler(room);
+    socket.emit("notify-someone-join", {
+      // currentUserName: CurrentUserFullData.userName,
+      roomId: room._id,
+      msg: `${CurrentUserFullData.userName} has joined the chat`,
+    });
   };
 
   // console.log(CurrentUser);
@@ -99,6 +121,40 @@ export default function CustomizedListArchieved(props) {
     };
     fetchAllGroups();
   }, [CurrentUser]);
+  const isHoveredHandler = (index, bol) => {
+    const updatedList = { ...isHovered };
+    updatedList[index] = bol;
+    setIsHovered(updatedList);
+  };
+  const handleClick = () => {
+    // Trigger the file input click event
+    fileInputRef.current.click();
+  };
+  const handleFileChange = async (event) => {
+    event.preventDefault();
+    const selectedFile = event.target.files[0];
+    console.log(selectedFile);
+    // if (selectedFile) {
+    //   try {
+    //     // Perform the file upload using Axios or your preferred HTTP client
+    //     const formData = new FormData();
+    //     formData.append("file", selectedFile);
+
+    //     // Replace the URL with your backend endpoint for handling file uploads
+    //     const response = await axios.post(
+    //       "/api/user/change-profile-picture",
+    //       formData
+    //     );
+
+    //     // Handle the response from the backend
+    //     console.log(response.data.message);
+    //     // You may want to update the user's profile picture on the frontend
+    //     // Example: setNewProfilePicture(response.data.newProfilePicture);
+    //   } catch (error) {
+    //     console.error("Error uploading file:", error.message);
+    //   }
+    // }
+  };
   return (
     <Box sx={{ display: "flex" }}>
       <ThemeProvider
@@ -194,9 +250,31 @@ export default function CustomizedListArchieved(props) {
                           columnGap: "10px",
                         }}
                       >
-                        <Avatar sx={{ bgcolor: pink }}>
-                          <PageviewIcon />
-                        </Avatar>
+                        <div
+                          onMouseEnter={() => isHoveredHandler(index, true)}
+                          onMouseLeave={() => isHoveredHandler(index, false)}
+                        >
+                          {isHovered[index] ? (
+                            <>
+                              <input
+                                type="file"
+                                ref={fileInputRef}
+                                style={{ display: "none" }}
+                                onChange={handleFileChange}
+                              />
+                              <Button
+                                component="label"
+                                variant="contained"
+                                startIcon={<CloudUploadIcon />}
+                                onClick={handleClick}
+                              ></Button>
+                            </>
+                          ) : (
+                            <Avatar sx={{ bgcolor: pink }}>
+                              <PageviewIcon />
+                            </Avatar>
+                          )}
+                        </div>
                         <ListItemText primary={room.name} />
                       </ListItemButton>
                       <MyFriendsUserMenu
