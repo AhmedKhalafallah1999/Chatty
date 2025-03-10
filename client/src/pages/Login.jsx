@@ -16,7 +16,7 @@ import styled from "@emotion/styled";
 import { Form, Link, redirect, useNavigation } from "react-router-dom";
 import { toast } from "react-toastify";
 import loader from "../assets/images/loader.gif";
-
+// import { useChattyContext } from "./Home";
 const BoxStyled = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -41,11 +41,12 @@ export const action = async ({ request }) => {
   }
 };
 export default function Login() {
+  // const { socket } = useChattyContext();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   return (
     <>
-      {!  isSubmitting ? (
+      {!isSubmitting ? (
         <Form className="text" method="post">
           <Card sx={{ minWidth: 275 }}>
             <CardContent>
@@ -82,7 +83,10 @@ export default function Login() {
               </BoxStyled>
             </CardContent>
             <CardActions>
-              <Button size="medium" type="submit">
+              <Button
+                size="medium"
+                type="submit"
+              >
                 Login
               </Button>
               <Typography

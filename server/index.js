@@ -27,8 +27,8 @@ const httpServer = createServer(app);
 dotenv.config();
 app.use(cors());
 // public
-const _dirname = dirname(fileURLToPath(import.meta.url));
-app.use(express.static(path.resolve(_dirname, "./public")));
+const __dirname = dirname(fileURLToPath(import.meta.url));
+app.use(express.static(path.join(__dirname, "./public")));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -53,20 +53,25 @@ const io = new Server(httpServer, {
 const userSocketMap = new Map();
 
 io.on("connection", (socket) => {
-  console.log(`User Connected ${socket.id}`);
-
+  console.log(`User Connected with ${socket.id}`);
   // storing the user ids with their socket ids into map
   socket.on("associated-current-user", async (payload) => {
     userSocketMap.set(payload.currentUserId, socket.id);
     const User = await user.findOne({ _id: payload.currentUserId });
-    User.socketId = true;
-    await User.save();
-    // console.log(userSocketMap);
+    if (User) {
+      User.socketId = true;
+      console.log("saved into");
+      await User.save();
+    }
   });
-
+  // socket.emit("associated-current-user","Fuck")
+  socket.on("test", (payload) => {
+    console.log(payload);
+  });
   // to handling user is typing notify
   socket.on("someone-is-typing", (payload) => {
     const myFriendSocketId = userSocketMap.get(payload.contactWith._id);
+    console.log(payload);
     if (myFriendSocketId) {
       io.to(myFriendSocketId).emit("notify-is-typing", {
         msg: payload.msg,
@@ -74,56 +79,44 @@ io.on("connection", (socket) => {
       });
     }
   });
-  // chat together
 
+  // chat together with some one
   socket.on("chatWith", async (payload) => {
     const myFriendSocketId = userSocketMap.get(payload.chatWithUserId);
-    let myUserId;
-    for (const [key, value] of userSocketMap.entries()) {
-      if (value === socket.id) {
-        myUserId = key;
-        break; // Stop the loop once the key is found
-      }
-    }
     const Message = await message.create({
-      sender: myUserId,
+      // try to change the sender or test this or
+      // send it by payload
+      sender: payload.senderId,
       reciver: payload.chatWithUserId,
       message: payload.msg,
+      // for future handling...
+      // status: myFriendSocketId ? "delivered" : "sent",
     });
     // console.log(Message);
     await Message.save();
-    if (myFriendSocketId === socket.id) {
-      io.to(socket.id).emit("recievePrivateMessage", {
-        // senderSocketId: socket.id,
-        msg: Message,
-      });
-    } else if (myFriendSocketId) {
+    // to sending the message to the myself like whatsapp
+    io.to(socket.id).emit("recievePrivateMessage", {
+      msg: Message,
+    });
+
+    if (myFriendSocketId) {
+      // if found, send to my friend
       io.to(myFriendSocketId).emit("recievePrivateMessage", {
-        // senderSocketId: socket.id,
-        msg: Message,
-      });
-      io.to(socket.id).emit("recievePrivateMessage", {
-        // senderSocketId: socket.id,
         msg: Message,
       });
       io.to(myFriendSocketId).emit("notify-msg", {
-        // senderSocketId: socket.id,
-        myUserId: myUserId,
+        myUserId: payload.senderId,
         myFriendUserId: payload.chatWithUserId,
       });
     } else {
-      console.log(`this user with ${socket.id} is offline`);
-      io.to(socket.id).emit("recievePrivateMessage", {
-        // senderSocketId: socket.id,
-        msg: Message,
-      });
       io.to(socket.id).emit("notify-is-offline", {
         msg: "is offline now, you can send as soon as be available, you can take a response",
       });
     }
   });
+  // for Handle message seen (read receipts) in future
 
-  // for room
+  // for room handling  =>
 
   socket.on("notify-someone-join", (payload) => {
     socket.join(payload.roomId);

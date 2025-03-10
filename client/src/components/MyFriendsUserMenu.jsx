@@ -15,7 +15,8 @@ export default function PositionedMenu(props) {
     setAnchorEl(null);
   };
   const handleArchivedHandler = async (user, CurrentUserFullData) => {
-    // console.log(user, CurrentUserFullData);
+    socket.emit("test", "from fetching archived users");
+
     const response = await fetch("/api/v1/feed/archived-user", {
       method: "POST",
       headers: {
@@ -37,7 +38,9 @@ export default function PositionedMenu(props) {
     }
   };
   const handleUndoArchivedHandler = async (user, CurrentUserFullData) => {
-    // console.log(user, CurrentUserFullData);
+ 
+    socket.emit("test", "from undo fetching archived users");
+
     const response = await fetch("/api/v1/feed/undo-archived-user", {
       method: "POST",
       headers: {

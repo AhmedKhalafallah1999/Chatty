@@ -17,7 +17,7 @@ import { Avatar, Button, TextField } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Upload from "./Upload";
 import SendIcon from "@mui/icons-material/Send";
-import { Form, Link } from "react-router-dom";
+import { Form, Link, json } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useChattyContext } from "../pages/Home";
 import PageviewIcon from "@mui/icons-material/Pageview";
@@ -25,7 +25,7 @@ import { pink } from "@mui/material/colors";
 import MyFriendsUserMenu from "./MyFriendsUserMenu";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useRef } from "react";
-
+import main from "../../../server/public/uploads/1702982445245-images.jpg";
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -130,30 +130,35 @@ export default function CustomizedListArchieved(props) {
     // Trigger the file input click event
     fileInputRef.current.click();
   };
-  const handleFileChange = async (event) => {
+  const handleFileChange = async (event, roomId) => {
     event.preventDefault();
     const selectedFile = event.target.files[0];
     console.log(selectedFile);
-    // if (selectedFile) {
-    //   try {
-    //     // Perform the file upload using Axios or your preferred HTTP client
-    //     const formData = new FormData();
-    //     formData.append("file", selectedFile);
+    if (selectedFile) {
+      try {
+        // Perform the file upload using Axios or your preferred HTTP client
+        const formData = new FormData();
+        formData.append("profilePicture", selectedFile);
+        formData.append("roomId", roomId);
 
-    //     // Replace the URL with your backend endpoint for handling file uploads
-    //     const response = await axios.post(
-    //       "/api/user/change-profile-picture",
-    //       formData
-    //     );
+        // Replace the URL with your backend endpoint for handling file uploads
+        const response = await fetch("/api/v1/room/change-profile-picture", {
+          method: "POST",
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
+          body: formData,
+        });
+        const result = await response.json();
 
-    //     // Handle the response from the backend
-    //     console.log(response.data.message);
-    //     // You may want to update the user's profile picture on the frontend
-    //     // Example: setNewProfilePicture(response.data.newProfilePicture);
-    //   } catch (error) {
-    //     console.error("Error uploading file:", error.message);
-    //   }
-    // }
+        // Handle the response from the backend
+        console.log(result);
+        // You may want to update the user's profile picture on the frontend
+        // Example: setNewProfilePicture(response.data.newProfilePicture);
+      } catch (error) {
+        console.error("Error uploading file:", error.message);
+      }
+    }
   };
   return (
     <Box sx={{ display: "flex" }}>
@@ -260,7 +265,10 @@ export default function CustomizedListArchieved(props) {
                                 type="file"
                                 ref={fileInputRef}
                                 style={{ display: "none" }}
-                                onChange={handleFileChange}
+                                onChange={(event) =>
+                                  handleFileChange(event, room._id)
+                                }
+                                name="profilePicture"
                               />
                               <Button
                                 component="label"
@@ -269,6 +277,13 @@ export default function CustomizedListArchieved(props) {
                                 onClick={handleClick}
                               ></Button>
                             </>
+                          ) : room.profileImage ? (
+                            <img
+                              src="/uploads/1702982445245-images.jpg"
+                              alt={`Avatar ${room.name}`}
+                              width={80}
+                              height={80}
+                            />
                           ) : (
                             <Avatar sx={{ bgcolor: pink }}>
                               <PageviewIcon />

@@ -79,7 +79,7 @@ const DrawerSlider = ({ isSmall, theme, isBig }) => {
   }, []);
 
   const openChatTogetherHandler = (user) => {
-    console.log(user);
+    // console.log(user);
     setMsgNumber((prev) => {
       const updatedUnreadMsg = { ...prev };
       delete updatedUnreadMsg[user._id];

@@ -11,7 +11,7 @@ import { action as NewPasswordAction } from "./pages/NewPassword";
 import { action as CreateGroupAction } from "./components/Rooms";
 import { loader as joinRoomLoader } from "./components/joinRoom";
 import JoinRoom from "./components/joinRoom";
-// importing socket.io
+// importing socket.io, then we can connect to ws server
 import io from "socket.io-client";
 const socket = io.connect("http://localhost:8080/");
 
@@ -34,7 +34,6 @@ const router = createBrowserRouter([
   {
     path: "/register/avatar",
     element: <Avatar />,
-    // action: RegisteredAction,
   },
   {
     path: "/login",

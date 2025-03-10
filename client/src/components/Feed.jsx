@@ -16,13 +16,8 @@ const Feed = () => {
     CurrentUser,
     notifyIsTypingHandler,
     notifyIsTyping,
-    RoomWith,
-    // StoresUsers,
   } = useChattyContext();
-  // console.log(ModalState);
-  // console.log(CurrentUser, ContactWith);
   const [messages, setMsg] = useState([]);
-  // const [notifyIsTyping, setNotifyIsTyping] = useState();
   const [prevMessages, setPrevMessages] = useState([]);
   const [showFullMessage, setShowFullMessage] = useState([]);
   useEffect(() => {
@@ -35,16 +30,13 @@ const Feed = () => {
         notifyIsTypingHandler("");
         if (response.ok) {
           setPrevMessages(result.messages);
-          // console.log(CurrentUser)
-
-          // console.log(result)
         } else {
           toast.error(result);
         }
       }
     };
     handleRecievePreviousMessage();
-  }, [ContactWith, CurrentUser]);
+  }, [ContactWith._id, CurrentUser._id]);
 
   useEffect(() => {
     const handleReceivePrivateMessage = (payload) => {
@@ -68,7 +60,7 @@ const Feed = () => {
     return () => {
       socket.off("notify-is-typing", handleReceivePrivateMessage);
     };
-  }, [socket, ContactWith]);
+  }, [socket, ContactWith, notifyIsTyping, notifyIsTypingHandler]);
   useEffect(() => {
     const handleReceivePrivateMessage = () => {
       setMsg([]);

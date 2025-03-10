@@ -3,12 +3,16 @@ import SendIcon from "@mui/icons-material/Send";
 import { useChattyContext } from "../pages/Home";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-const SendMessage = (props) => {
+import debounce from "debounce";
+import { useCallback } from "react";
+import { useRef } from "react";
+const SendMessage = () => {
   const { socket, ContactWith, sideBarOpen, CurrentUserFullData, RoomWith } =
     useChattyContext();
+
+  const messageInputRef = useRef(null);
   useEffect(() => {
     const notifyOfflineHandler = (payload) => {
-      // console.log("fffffffffffff");
       toast.error(`${ContactWith.userName} ${payload.msg}`);
     };
 
@@ -19,17 +23,39 @@ const SendMessage = (props) => {
       socket.off("notify-is-offline", notifyOfflineHandler);
     };
   }, [socket, ContactWith]);
-  const sendMsgHandler = (value) => {
-    if (ContactWith) {
-      socket.emit("chatWith", { chatWithUserId: ContactWith._id, msg: value });
-    } else if (RoomWith) {
-      socket.emit("roomWith", {
-        chatWithRoomId: RoomWith._id,
-        currentUserId: CurrentUserFullData._id,
-        msg: value,
-      });
-    }
-  };
+  const sendMsgHandler = useCallback(
+    (value) => {
+
+      if (ContactWith) {
+        socket.emit("chatWith", {
+          chatWithUserId: ContactWith._id,
+          msg: value,
+          senderId: CurrentUserFullData._id,
+        });
+      } else if (RoomWith) {
+        socket.emit("roomWith", {
+          chatWithRoomId: RoomWith._id,
+          currentUserId: CurrentUserFullData._id,
+          msg: value,
+        });
+      }
+    },
+    [socket, ContactWith?._id, RoomWith?._id, CurrentUserFullData?._id]
+  );
+  // to notify some one is typing, and debounce the fun to
+  // reduce and optimize the emmiting of events to server every key stroke
+  const notifySomeOneTypingHandler = useCallback(
+    debounce(() => {
+      if (ContactWith) {
+        socket.emit("someone-is-typing", {
+          msg: `${CurrentUserFullData.userName} is typing ...`,
+          contactWith: ContactWith,
+          sender: CurrentUserFullData._id,
+        });
+      }
+    }, 2000),
+    [ContactWith, socket, CurrentUserFullData]
+  );
   return (
     <SendMsgContainer>
       <div className={sideBarOpen ? "sendMsg" : "sendMsg full-width"}>
@@ -37,28 +63,22 @@ const SendMessage = (props) => {
           id="send-msg-input"
           type="text"
           placeholder="enter a message"
+          ref={messageInputRef}
           onChange={() => {
-            // console.log(ContactWith);
-            if (ContactWith) {
-              socket.emit("someone-is-typing", {
-                msg: `${CurrentUserFullData.userName} is typing ...`,
-                contactWith: ContactWith,
-                sender: CurrentUserFullData._id,
-              });
-            }
+            notifySomeOneTypingHandler();
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              sendMsgHandler(document.getElementById("send-msg-input").value);
-              document.getElementById("send-msg-input").value = "";
+              sendMsgHandler(messageInputRef.current.value);
+              messageInputRef.current.value = "";
             }
           }}
         />
         <SendIcon
           className="send-icon"
           onClick={() => {
-            sendMsgHandler(document.getElementById("send-msg-input").value);
-            document.getElementById("send-msg-input").value = "";
+            sendMsgHandler(messageInputRef.current.value);
+            messageInputRef.current.value = "";
           }}
         />
       </div>

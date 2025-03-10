@@ -4,16 +4,19 @@ import Menu from "@mui/material/Menu";
 import { Avatar, MenuItem, styled } from "@mui/material";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useChattyContext } from "../pages/Home";
 const UserMenu = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [ItemClicked, setItemClicked] = useState("null");
   const navigate = useNavigate();
+  const { socket } = useChattyContext();
   const handleLogoutItem = async () => {
     const response = await fetch("/api/v1/auth/logout");
     const result = await response.json();
 
     if (response.ok) {
       toast.success(result.msg);
+      socket.disconnect();
       return navigate("/");
     }
     return toast.error(result.msg);

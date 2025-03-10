@@ -5,7 +5,7 @@ import {
   comparePasswordHandler,
   hashedPasswordHandler,
 } from "../utils/hashedPassword.js";
-import { GenerateToken } from "../utils/JWT.js";
+import { GenerateToken } from "../utils/jwt.js";
 import crypto from "crypto";
 import {
   NotAuthinticationError,
@@ -25,7 +25,7 @@ export const Register = async (req, res, next) => {
   return sendMail(options(email, emailParagraph), (msg) => {
     try {
       return res.json({
-        msg: "You recieve a confirmation email to your email",
+        msg: "You recieve a confirmation email to your email" || msg,
       });
     } catch (error) {
       return res.json({ msg: error.msg });
