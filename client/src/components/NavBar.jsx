@@ -14,7 +14,9 @@ import BasicModal from "./Modal";
 import BasicRightModal from "./ModalRight";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import UserMenu from "./UserMenu";
-import { useChattyContext } from "../pages/Home";
+
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 import { useAppContext } from "../App";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 const StyledToolBar = styled(Toolbar)({

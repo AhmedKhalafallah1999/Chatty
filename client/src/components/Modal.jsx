@@ -1,6 +1,8 @@
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { useChattyContext } from "../pages/Home";
+
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 import DrawerSlider from "./Drawer";
 
 const style = {

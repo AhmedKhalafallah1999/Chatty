@@ -71,13 +71,13 @@ io.on("connection", (socket) => {
   // to handling user is typing notify
   socket.on("someone-is-typing", (payload) => {
     const myFriendSocketId = userSocketMap.get(payload.contactWith._id);
-    console.log(payload);
-    if (myFriendSocketId) {
+    if (myFriendSocketId !== socket.id && myFriendSocketId) {
       io.to(myFriendSocketId).emit("notify-is-typing", {
         msg: payload.msg,
         sender: payload.sender,
       });
     }
+    console.log(userSocketMap);
   });
 
   // chat together with some one
@@ -99,7 +99,7 @@ io.on("connection", (socket) => {
       msg: Message,
     });
 
-    if (myFriendSocketId) {
+    if (myFriendSocketId !== socket.id && myFriendSocketId) {
       // if found, send to my friend
       io.to(myFriendSocketId).emit("recievePrivateMessage", {
         msg: Message,
@@ -108,7 +108,7 @@ io.on("connection", (socket) => {
         myUserId: payload.senderId,
         myFriendUserId: payload.chatWithUserId,
       });
-    } else {
+    } else if (!myFriendSocketId) {
       io.to(socket.id).emit("notify-is-offline", {
         msg: "is offline now, you can send as soon as be available, you can take a response",
       });

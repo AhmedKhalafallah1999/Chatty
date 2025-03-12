@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import SendIcon from "@mui/icons-material/Send";
-import { useChattyContext } from "../pages/Home";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import debounce from "debounce";
 import { useCallback } from "react";
 import { useRef } from "react";
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 const SendMessage = () => {
   const { socket, ContactWith, sideBarOpen, CurrentUserFullData, RoomWith } =
     useChattyContext();
@@ -25,7 +26,6 @@ const SendMessage = () => {
   }, [socket, ContactWith]);
   const sendMsgHandler = useCallback(
     (value) => {
-
       if (ContactWith) {
         socket.emit("chatWith", {
           chatWithUserId: ContactWith._id,
@@ -40,7 +40,7 @@ const SendMessage = () => {
         });
       }
     },
-    [socket, ContactWith?._id, RoomWith?._id, CurrentUserFullData?._id]
+    [ContactWith, RoomWith, socket, CurrentUserFullData._id]
   );
   // to notify some one is typing, and debounce the fun to
   // reduce and optimize the emmiting of events to server every key stroke
@@ -69,6 +69,7 @@ const SendMessage = () => {
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
+              notifySomeOneTypingHandler.clear();
               sendMsgHandler(messageInputRef.current.value);
               messageInputRef.current.value = "";
             }
@@ -77,6 +78,7 @@ const SendMessage = () => {
         <SendIcon
           className="send-icon"
           onClick={() => {
+            notifySomeOneTypingHandler.clear();
             sendMsgHandler(messageInputRef.current.value);
             messageInputRef.current.value = "";
           }}

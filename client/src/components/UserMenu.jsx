@@ -4,7 +4,9 @@ import Menu from "@mui/material/Menu";
 import { Avatar, MenuItem, styled } from "@mui/material";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useChattyContext } from "../pages/Home";
+
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 const UserMenu = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [ItemClicked, setItemClicked] = useState("null");

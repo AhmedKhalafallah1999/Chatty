@@ -1,5 +1,7 @@
 import { Avatar, Box, Button } from "@mui/material";
-import { useChattyContext } from "../pages/Home";
+
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 import styled from "styled-components";
 import SendMessage from "./SendMessage";
 import MyFriendsUserMenu from "./MyFriendsUserMenu";

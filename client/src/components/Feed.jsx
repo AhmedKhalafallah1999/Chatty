@@ -1,13 +1,12 @@
 import { Box } from "@mui/material";
-import { useChattyContext } from "../pages/Home";
 import styled from "styled-components";
 import SendMessage from "./SendMessage";
 import MyFriendsUserMenu from "./MyFriendsUserMenu";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import LanguageDetector from "./LanguageDetector";
 import welcome from "../assets/images/wlcome.gif";
-
+import { useChattyContext } from "../pages/ChattyContextProvider";
 const Feed = () => {
   const {
     socket,
@@ -17,6 +16,14 @@ const Feed = () => {
     notifyIsTypingHandler,
     notifyIsTyping,
   } = useChattyContext();
+
+  // const renderCount = useRef(0);
+  // renderCount.current += 1;
+
+  // useEffect(() => {
+  //   socket.emit("test", `from feed - Render Count: ${renderCount.current}`);
+  // });
+
   const [messages, setMsg] = useState([]);
   const [prevMessages, setPrevMessages] = useState([]);
   const [showFullMessage, setShowFullMessage] = useState([]);
@@ -24,7 +31,7 @@ const Feed = () => {
     const handleRecievePreviousMessage = async () => {
       if (ContactWith && CurrentUser) {
         const response = await fetch(
-          `/api/v1/feed/previousMsg/${ContactWith._id}`
+          `/api/v1/feed/previousMsg/${ContactWith?._id}`
         );
         const result = await response.json();
         notifyIsTypingHandler("");
@@ -36,36 +43,30 @@ const Feed = () => {
       }
     };
     handleRecievePreviousMessage();
-  }, [ContactWith._id, CurrentUser._id]);
+  }, [ContactWith]);
 
   useEffect(() => {
     const handleReceivePrivateMessage = (payload) => {
       setMsg((prevMessages) => [...prevMessages, payload.msg]);
       notifyIsTypingHandler("");
     };
-
-    socket.on("recievePrivateMessage", handleReceivePrivateMessage);
-
-    return () => {
-      socket.off("recievePrivateMessage", handleReceivePrivateMessage);
-    };
-  }, [socket]);
-  useEffect(() => {
-    const handleReceivePrivateMessage = (payload) => {
+    const NotifyTypingOnContactWrite = (payload) => {
       notifyIsTypingHandler(payload.msg, payload.sender);
     };
 
-    socket.on("notify-is-typing", handleReceivePrivateMessage);
+    socket.on("recievePrivateMessage", handleReceivePrivateMessage);
+    socket.on("notify-is-typing", NotifyTypingOnContactWrite);
 
     return () => {
-      socket.off("notify-is-typing", handleReceivePrivateMessage);
+      socket.off("recievePrivateMessage", handleReceivePrivateMessage);
+      socket.off("notify-is-typing", NotifyTypingOnContactWrite);
     };
-  }, [socket, ContactWith, notifyIsTyping, notifyIsTypingHandler]);
+  }, [notifyIsTypingHandler]);
   useEffect(() => {
-    const handleReceivePrivateMessage = () => {
+    const clearMessagesOnContactChange = () => {
       setMsg([]);
     };
-    handleReceivePrivateMessage();
+    clearMessagesOnContactChange();
   }, [ContactWith]);
   const handleReadMore = (index) => {
     const updatedShowFullMessage = [...showFullMessage];

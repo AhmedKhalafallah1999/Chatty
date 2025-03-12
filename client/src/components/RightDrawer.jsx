@@ -6,11 +6,10 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-
 import styled from "@emotion/styled";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
-import { useChattyContext } from "../pages/Home";
+import { useChattyContext } from "../pages/ChattyContextProvider";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { useAppContext } from "../App";

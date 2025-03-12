@@ -7,7 +7,9 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
-import { useChattyContext } from "../pages/Home";
+
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 export default function LatestConversations() {
   const { CurrentUserFullData } = useChattyContext();
   const [threePreviousChats, setThreePreviousChats] = useState([]);
@@ -44,12 +46,12 @@ export default function LatestConversations() {
               secondary={
                 <React.Fragment>
                   <Typography
-                    sx={{ display: "inline" ,marginRight:"5px"}}
+                    sx={{ display: "inline", marginRight: "5px" }}
                     component="span"
                     variant="body2"
                     color="text.primary"
                   >
-                    {CurrentUserFullData.userName +":"}
+                    {CurrentUserFullData.userName + ":"}
                   </Typography>
                   {msg.message}
                 </React.Fragment>

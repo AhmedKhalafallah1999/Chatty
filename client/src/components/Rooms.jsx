@@ -19,7 +19,9 @@ import Upload from "./Upload";
 import SendIcon from "@mui/icons-material/Send";
 import { Form, Link, json } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useChattyContext } from "../pages/Home";
+
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 import PageviewIcon from "@mui/icons-material/Pageview";
 import { pink } from "@mui/material/colors";
 import MyFriendsUserMenu from "./MyFriendsUserMenu";

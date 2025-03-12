@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-// import { useChattyContext } from "../pages/Home";
+//
+import { useChattyContext } from "../pages/ChattyContextProvider";
 
 export const loader = async ({ params }) => {
   const roomId = params.roomId;

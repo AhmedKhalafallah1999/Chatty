@@ -15,7 +15,9 @@ import Paper from "@mui/material/Paper";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import styled from "styled-components";
 import MyFriendsUserMenu from "./MyFriendsUserMenu";
-import { useChattyContext } from "../pages/Home";
+
+import { useChattyContext } from "../pages/ChattyContextProvider";
+
 import { Typography } from "@mui/material";
 
 const FireNav = MUIStyled(List)({
